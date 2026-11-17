@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINGUO — онлайн-школа иностранных языков</title>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                screens: {
+                    'xs': '375px',
+                    'sm': '640px',
+                    'md': '768px',
+                    'lg': '1024px',
+                    'xl': '1280px',
+                    '2xl': '1536px',
+                },
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16',
+                        },
+                        linguo: {
+                            dark: '#222529',
+                            darker: '#1A1C1F',
+                            light: '#F4F5F7',
+                            blue: '#3b82f6',
+                            indigo: '#6366f1',
+                            purple: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body
+    class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
+    <div id="app" v-cloak class="min-h-screen flex flex-col">
+
+        <!-- =========================================================
+             НАВИГАЦИОННАЯ ПАНЕЛЬ
+        ========================================================= -->
+        <header
+            class="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 gap-4">
+                    <!-- Логотип -->
+                    <div class="flex items-center gap-3 cursor-pointer shrink-0" @click="activePage = 'home'">
+                        <div class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-bold text-xl shadow-sm transition-transform active:scale-95">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <div>
+                            <span class="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">LINGUO</span>
+                        </div>
+                    </div>
+
+                    <!-- Десктопное меню -->
+                    <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+                        <button
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5"
+                            :class="activePage === 'courses' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'courses'">
+                            Курсы
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold">
+                                {{ courses.length }}
+                            </span>
+                        </button>
+                        <button v-if="currentUser"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="activePage === 'chat' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'chat'">
+                            <i class="bi bi-chat-dots mr-1"></i> Чат
+                        </button>
+                        <button v-if="currentUser"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="activePage === 'workspace' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'workspace'">
+                            <i class="bi bi-kanban mr-1"></i> Мои задачи
+                        </button>
+                        <button v-if="currentUser"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="activePage === 'files' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'files'">
+                            <i class="bi bi-folder2 mr-1"></i> Файлы
+                        </button>
+                        <button v-if="currentUser && currentUser.role === 'admin'"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="activePage === 'admin' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'admin'">
+                            Voyager Админка
+                        </button>
+                        <button v-if="currentUser && currentUser.role === 'admin'"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="activePage === 'logs' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'logs'">
+                            Логи
+                        </button>
+                        <button v-if="currentUser && currentUser.role === 'admin'"
+                            class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                            :class="activePage === 'api' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                            @click="activePage = 'api'">
+                            API v1
+                        </button>
+                    </nav>
+
+                    <!-- Действия справа -->
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <button @click="toggleDarkMode"
+                            class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 transition-colors"
+                            :title="isDark ? 'Переключить на светлую тему' : 'Переключить на темную тему'"
+                            aria-label="Переключение темы">
+                            <i v-if="isDark" class="bi bi-sun-fill text-amber-400 text-lg"></i>
+                            <i v-else class="bi bi-moon-stars-fill text-slate-700 text-lg"></i>
+                        </button>
+
+                        <template v-if="currentUser">
+                            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-medium">
+                                <i class="bi bi-person-circle text-slate-500"></i>
+                                <span class="truncate max-w-[120px]">{{ currentUser.name }}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase" :class="{
+                                          'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300': currentUser.role === 'admin',
+                                          'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300': currentUser.role === 'manager',
+                                          'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300': currentUser.role === 'student'
+                                      }">
+                                    {{ currentUser.role === 'admin' ? 'Администратор' : currentUser.role === 'manager' ? 'Менеджер' : 'Студент' }}
+                                </span>
+                            </div>
+                            <button class="btn-ghost-tw btn-sm-tw" @click="handleLogout" title="Выход">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </template>
+
+                        <template v-else>
+                            <button class="btn-primary-tw btn-sm-tw" @click="activePage = 'auth'; authTab = 'login'">
+                                <i class="bi bi-box-arrow-in-right"></i> Войти
+                            </button>
+                        </template>
+
+                        <button class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Открыть мобильное меню">
+                            <i class="bi bi-list text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Мобильное меню -->
+            <div v-show="mobileMenuOpen"
+                class="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-3 pb-6 space-y-2">
+                <button v-if="currentUser" class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm" @click="activePage = 'chat'; mobileMenuOpen = false"><i class="bi bi-chat-dots mr-2"></i>Чат</button>
+                <button v-if="currentUser" class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm" @click="activePage = 'workspace'; mobileMenuOpen = false"><i class="bi bi-kanban mr-2"></i>Мои задачи</button>
+                <button v-if="currentUser" class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm flex items-center justify-between"
+                    :class="activePage === 'files' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'"
+                    @click="activePage = 'files'; mobileMenuOpen = false">
+                    <span>Файлы (GDrive / Local)</span>
+                    <i class="bi bi-folder2"></i>
+                </button>
+                <button v-if="currentUser && currentUser.role === 'admin'"
+                    class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm flex items-center justify-between"
+                    :class="activePage === 'admin' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'"
+                    @click="activePage = 'admin'; mobileMenuOpen = false">
+                    <span>Voyager Админка</span>
+                    <i class="bi bi-shield-lock"></i>
+                </button>
+                <button v-if="currentUser && currentUser.role === 'admin'"
+                    class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm flex items-center justify-between"
+                    :class="activePage === 'logs' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'"
+                    @click="activePage = 'logs'; mobileMenuOpen = false">
+                    <span>Логи аудита (vue-json-compare)</span>
+                    <i class="bi bi-journal-text"></i>
+                </button>
+                <button v-if="currentUser && currentUser.role === 'admin'"
+                    class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm flex items-center justify-between"
+                    :class="activePage === 'api' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'"
+                    @click="activePage = 'api'; mobileMenuOpen = false">
+                    <span>REST API Explorer</span>
+                    <i class="bi bi-code-slash"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- ГЛАВНАЯ -->
+        <main v-if="activePage === 'home'" class="flex-1">
+            <section class="py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            <i class="bi bi-stars text-amber-500"></i> Онлайн-школа иностранных языков
+                        </span>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                            Изучайте иностранные языки онлайн
+                        </h1>
+                        <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">
+                            Интерактивные курсы, преподаватели-носители языка и гибкий график обучения для любого уровня
+                            подготовки от A1 до C2.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <button class="btn-primary-tw btn-lg-tw" @click="activePage = 'courses'">
+                                <i class="bi bi-grid-fill"></i> Каталог курсов ({{ courses.length }})
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5">
+                        <img src="images/hero_learning_1791364551777.jpg" alt="Онлайн обучение"
+                            class="rounded-3xl shadow-2xl object-cover w-full max-h-[420px]">
+                    </div>
+                </div>
+            </section>
+
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="flex items-end justify-between gap-4 mb-6">
+                    <div>
+                        <p class="text-sm font-semibold text-indigo-600 mb-2">Наша команда</p>
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-white">Преподаватели, которые вдохновляют</h2>
+                        <p class="mt-2 text-slate-600 dark:text-slate-300">Опытные педагоги и носители языков помогут уверенно заговорить.</p>
+                    </div>
+                    <button class="btn-secondary-tw btn-md-tw" @click="activePage = 'courses'">Все курсы</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <article v-for="teacher in teachers" :key="teacher.name" class="teacher-card card-base overflow-hidden">
+                        <img :src="teacher.avatarUrl" :alt="teacher.name" class="teacher-photo" loading="lazy">
+                        <div class="p-5">
+                            <h3 class="font-bold text-lg text-slate-900 dark:text-white">{{ teacher.name }}</h3>
+                            <p class="text-sm text-indigo-600 dark:text-indigo-300 mt-1">{{ teacher.language }} · {{ teacher.country }}</p>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-3 line-clamp-3">{{ teacher.bio }}</p>
+                            <div class="flex items-center justify-between mt-4 text-xs text-slate-500 dark:text-slate-300">
+                                <span><i class="bi bi-star-fill text-amber-500"></i> {{ teacher.rating }}</span>
+                                <span>{{ teacher.experience }} опыта</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 grid md:grid-cols-3 gap-5">
+                <article class="card-base p-6"><i class="bi bi-globe2 text-2xl text-indigo-600"></i><h3 class="font-bold text-lg mt-3 text-slate-900 dark:text-white">Кто мы</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">LINGUO — онлайн-школа, где обучение строится вокруг живого общения, практики и понятных целей.</p></article>
+                <article class="card-base p-6"><i class="bi bi-lightbulb text-2xl text-indigo-600"></i><h3 class="font-bold text-lg mt-3 text-slate-900 dark:text-white">Как мы учим</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Небольшие группы, интерактивные материалы, обратная связь и записи занятий для повторения.</p></article>
+                <article class="card-base p-6"><i class="bi bi-award text-2xl text-indigo-600"></i><h3 class="font-bold text-lg mt-3 text-slate-900 dark:text-white">Ваш результат</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Помогаем отслеживать прогресс и применять язык в путешествиях, учёбе и работе.</p></article>
+            </section>
+
+            <!-- Excel Dropzone -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all cursor-pointer"
+                    :class="isDragging ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 scale-[1.01]' : 'border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 hover:border-emerald-500'"
+                    @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
+                    @click="triggerFileDialog">
+                    <input type="file" ref="fileInputRef" class="hidden" accept=".xlsx,.xls" @change="handleFileSelect">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        Загрузка файлов Microsoft Excel (.xlsx, .xls)
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-lg mx-auto mb-6">
+                        Перетащите файл сюда методом Drag-and-Drop или выберите файл на компьютере. Все не-excel файлы
+                        вызовут модальное окно ошибки.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-3" @click.stop>
+                        <button class="btn-brand-tw btn-md-tw" @click="triggerFileDialog">
+                            <i class="bi bi-folder2-open"></i> Выбрать Excel файл
+                        </button>
+                        <button class="btn-secondary-tw btn-md-tw" @click="downloadSampleExcel('courses')">
+                            <i class="bi bi-download"></i> Скачать шаблон (.xlsx)
+                        </button>
+                        <button class="btn-danger-tw btn-md-tw" @click="triggerInvalidFileTest">
+                            <i class="bi bi-exclamation-triangle"></i> Тест ошибки формата (.docx)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <ad-slot format="banner" label="Спонсорский блок • Реклама"
+                    title="Платформа LinguaPro — практикуйте иностранный язык каждый день. Специальные условия для студентов LINGUO"
+                    slot-id="ADS-TOP-BANNER">
+                </ad-slot>
+            </section>
+        </main>
+
+        <!-- ЧАТ -->
+        <main v-if="activePage === 'chat'" class="flex-1 py-10 max-w-6xl mx-auto px-4 sm:px-6 w-full">
+            <div class="mb-6">
+                <p class="text-sm font-semibold text-indigo-600">Общение</p>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white">Чат</h1>
+                <p class="text-slate-600 dark:text-slate-300 mt-2">Переписывайтесь с преподавателями и учебной командой.</p>
+            </div>
+            <article class="card-base p-0 overflow-hidden shadow-sm">
+                <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Личные сообщения</span>
+                    <span class="text-xs text-slate-400">Диалог с: {{ currentDialogue.name }}</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 h-[500px]">
+                    <div class="md:col-span-4 border-r border-slate-200 dark:border-slate-800 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700">
+                        <div class="p-3 border-b border-slate-100 dark:border-slate-800">
+                            <input type="text" v-model="chatSearch" placeholder="Поиск диалогов..." class="input-base text-xs py-1.5">
+                        </div>
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                            <div v-for="d in filteredDialogues" :key="d.id"
+                                class="p-3.5 flex items-start gap-3 cursor-pointer transition-colors"
+                                :class="activeDialogueId === d.id ? 'bg-indigo-50/60 dark:bg-indigo-950/30' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'"
+                                @click="activeDialogueId = d.id">
+                                <div class="relative shrink-0">
+                                    <img v-if="d.avatarUrl" :src="d.avatarUrl" :alt="d.name" class="w-10 h-10 rounded-full object-cover">
+                                    <div v-else class="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center font-bold text-xs">
+                                        {{ d.avatar }}
+                                    </div>
+                                    <span v-if="d.online" class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-0.5">
+                                        <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">{{ d.name }}</h4>
+                                        <span class="text-[10px] text-slate-400">{{ d.time }}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ d.lastMessage }}</p>
+                                </div>
+                                <span v-if="d.unread > 0" class="shrink-0 w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center">
+                                    {{ d.unread }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8 flex flex-col h-full bg-slate-50/50 dark:bg-slate-900/40">
+                        <div class="p-3.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+                            <img v-if="currentDialogue.avatarUrl" :src="currentDialogue.avatarUrl" :alt="currentDialogue.name" class="w-8 h-8 rounded-full object-cover">
+                            <div v-else class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                                {{ currentDialogue.avatar }}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">{{ currentDialogue.name }}</h4>
+                                <span class="text-[10px] text-emerald-500 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> В сети
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-4 overflow-y-auto space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700" ref="chatMessagesRef">
+                            <div v-if="currentMessages.length <= 2" class="flex flex-wrap gap-2 mb-3">
+                                <button v-for="(q, qi) in quickChatQuestions" :key="qi"
+                                    class="text-[10px] px-3 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                                    @click="sendQuickQuestion(q)">
+                                    {{ q }}
+                                </button>
+                            </div>
+                            <div v-for="m in currentMessages" :key="m.id" class="flex" :class="m.sender === 'me' ? 'justify-end' : 'justify-start'">
+                                <div class="max-w-[75%] rounded-2xl px-4 py-2.5 text-xs shadow-sm"
+                                    :class="m.sender === 'me' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-none'">
+                                    <p class="leading-relaxed">{{ m.text }}</p>
+                                    <span class="block text-[9px] mt-1 text-right opacity-70">{{ m.time }}</span>
+                                </div>
+                            </div>
+                            <div v-if="isContactTyping" class="flex justify-start">
+                                <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
+                                    <div class="flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0ms;"></span>
+                                        <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 150ms;"></span>
+                                        <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 300ms;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex gap-2">
+                            <input type="text" v-model="newMessageText" @keyup.enter="sendChatMessage"
+                                placeholder="Напишите сообщение преподавателю..."
+                                class="input-base text-xs py-2 flex-1">
+                            <button class="btn-primary-tw btn-sm-tw bg-indigo-600 hover:bg-indigo-700" @click="sendChatMessage">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <!-- WORKSPACE (Kanban) -->
+        <main v-if="activePage === 'workspace'" class="flex-1 py-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
+            <div class="mb-6">
+                <p class="text-sm font-semibold text-indigo-600">Личный кабинет</p>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white">Мои задачи</h1>
+                <p class="text-slate-600 dark:text-slate-300 mt-2">Перемещайте задачи по этапам и добавляйте новые.</p>
+            </div>
+            <article class="card-base p-5">
+                <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                    <input v-model="newKanbanTitle" @keyup.enter="addKanbanTask" class="input-base flex-1" placeholder="Название новой задачи">
+                    <button class="btn-primary-tw btn-md-tw" @click="addKanbanTask"><i class="bi bi-plus-lg"></i> Добавить задачу</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <section class="rounded-2xl bg-slate-50 dark:bg-slate-900 p-4">
+                        <h2 class="font-bold mb-4 text-slate-900 dark:text-white">К выполнению · {{ kanbanTodo.length }}</h2>
+                        <div v-for="t in kanbanTodo" :key="t.id" class="bg-white dark:bg-slate-800 rounded-xl p-4 mb-3 shadow-sm">
+                            <p class="font-semibold text-slate-900 dark:text-white">{{ t.title }}</p>
+                            <p class="text-xs text-slate-500 mt-2">{{ t.assignee }}</p>
+                            <button class="btn-secondary-tw btn-sm-tw mt-3" @click="moveKanbanTask(t, 'inProgress')">В работу →</button>
+                        </div>
+                    </section>
+                    <section class="rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 p-4">
+                        <h2 class="font-bold mb-4 text-slate-900 dark:text-white">В процессе · {{ kanbanInProgress.length }}</h2>
+                        <div v-for="t in kanbanInProgress" :key="t.id" class="bg-white dark:bg-slate-800 rounded-xl p-4 mb-3 shadow-sm">
+                            <p class="font-semibold text-slate-900 dark:text-white">{{ t.title }}</p>
+                            <p class="text-xs text-slate-500 mt-2">{{ t.assignee }}</p>
+                            <div class="flex gap-2 mt-3">
+                                <button class="btn-secondary-tw btn-sm-tw" @click="moveKanbanTask(t, 'todo')">← Назад</button>
+                                <button class="btn-primary-tw btn-sm-tw" @click="moveKanbanTask(t, 'done')">Готово ✓</button>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 p-4">
+                        <h2 class="font-bold mb-4 text-slate-900 dark:text-white">Готово · {{ kanbanDone.length }}</h2>
+                        <div v-for="t in kanbanDone" :key="t.id" class="bg-white dark:bg-slate-800 rounded-xl p-4 mb-3 shadow-sm">
+                            <p class="font-semibold text-slate-900 dark:text-white">{{ t.title }}</p>
+                            <p class="text-xs text-slate-500 mt-2">{{ t.assignee }}</p>
+                            <button class="btn-secondary-tw btn-sm-tw mt-3" @click="moveKanbanTask(t, 'inProgress')">Вернуть в работу</button>
+                        </div>
+                    </section>
+                </div>
+            </article>
+        </main>
+
+        <!-- КУРСЫ -->
+        <main v-if="activePage === 'courses'" class="flex-1 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-white">Курсы и группы LINGUO</h2>
+                    <p class="text-xs text-slate-500">Управление базой данных, пагинация (>10 строк), ленивая подгрузка и фильтрация</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button v-if="currentUser" class="btn-primary-tw btn-sm-tw" @click="openAddCourseModal">
+                        <i class="bi bi-plus-lg"></i> Добавить курс
+                    </button>
+                    <button v-if="currentUser" class="btn-brand-tw btn-sm-tw" @click="createGoogleDriveDump">
+                        <i class="bi bi-google"></i> Дамп на Google Диск
+                    </button>
+                    <button v-if="currentUser" class="btn-secondary-tw btn-sm-tw" @click="emailModalVisible = true">
+                        <i class="bi bi-envelope"></i> Отчет на Email
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-6 flex justify-center">
+                <ad-slot format="leaderboard" label="Партнерская сеть"
+                    title="Специальное предложение от образовательного сервиса LanguagePro: скидка 30% на учебные материалы"
+                    slot-id="ADS-COURSES-LEADERBOARD">
+                </ad-slot>
+            </div>
+
+            <div class="card-base p-0 overflow-hidden">
+                <div class="p-4 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex flex-wrap gap-3 items-center justify-between">
+                    <input type="text" v-model="courseSearch" placeholder="Поиск по курсам и преподавателям..." class="input-base text-xs py-2 w-full sm:w-64">
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <div class="w-40"><custom-select v-model="courseLangFilter" :options="filterLanguageOptions" placeholder="Все языки" size="sm"></custom-select></div>
+                        <div class="w-36"><custom-select v-model="courseLevelFilter" :options="filterLevelOptions" placeholder="Все уровни" size="sm"></custom-select></div>
+                        <div class="w-40"><custom-select v-model="courseStatusFilter" :options="filterStatusOptions" placeholder="Все статусы" size="sm"></custom-select></div>
+                        <button class="btn-secondary-tw btn-sm-tw" @click="resetFilters" title="Сбросить все фильтры">
+                            <i class="bi bi-x-circle"></i> Сброс
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
+                            <tr>
+                                <th class="p-3.5">ID</th>
+                                <th class="p-3.5">Название</th>
+                                <th class="p-3.5">Язык</th>
+                                <th class="p-3.5">Уровень</th>
+                                <th class="p-3.5">Преподаватель</th>
+                                <th class="p-3.5">Цена</th>
+                                <th class="p-3.5">Статус</th>
+                                <th class="p-3.5 text-right">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tr v-for="c in paginatedCourses" :key="c.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                <td class="p-3.5 font-bold text-slate-500">#{{ c.id }}</td>
+                                <td class="p-3.5 font-bold text-slate-900 dark:text-white cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" @click="viewCourseDetails(c)">
+                                    <div class="flex items-center gap-2">
+                                        <span>{{ c.title }}</span>
+                                        <i class="bi bi-box-arrow-up-right text-[10px] opacity-0 group-hover:opacity-100 transition-opacity text-indigo-500"></i>
+                                    </div>
+                                </td>
+                                <td class="p-3.5 text-slate-700 dark:text-slate-300">{{ c.language }}</td>
+                                <td class="p-3.5"><span class="badge-info">{{ c.level }}</span></td>
+                                <td class="p-3.5 text-slate-800 dark:text-slate-200 font-medium cursor-pointer hover:underline" @click="viewCourseDetails(c)">{{ c.teacher }}</td>
+                                <td class="p-3.5 font-extrabold text-slate-900 dark:text-white">{{ c.price }} BYN</td>
+                                <td class="p-3.5">
+                                    <span class="badge-success" :class="{'badge-warning': c.status === 'Идет обучение', 'badge-info': c.status === 'Завершен'}">{{ c.status }}</span>
+                                </td>
+                                <td class="p-3.5 text-right space-x-1 whitespace-nowrap">
+                                    <button class="btn-primary-tw btn-sm-tw bg-indigo-600 hover:bg-indigo-700" @click="viewCourseDetails(c)" title="Смотреть курс">
+                                        <i class="bi bi-eye"></i> Детали
+                                    </button>
+                                    <button v-if="currentUser" class="btn-secondary-tw btn-sm-tw" @click="openEditCourseModal(c)" title="Редактировать">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button v-if="currentUser" class="btn-danger-tw btn-sm-tw" @click="deleteCourseAsync(c)" title="Удалить">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <span class="text-xs text-slate-400">Показано {{ paginatedCourses.length }} из {{ filteredCourses.length }} записей</span>
+                    <button v-if="paginatedCourses.length < filteredCourses.length" class="btn-secondary-tw btn-sm-tw" @click="lazyLoadMore">
+                        <i class="bi bi-arrow-down-circle"></i> Загрузить ещё (+5 курсов лениво)
+                    </button>
+                    <div class="flex items-center gap-1">
+                        <button v-for="p in totalPages" :key="p"
+                            class="w-7 h-7 rounded-lg text-xs font-bold transition-colors"
+                            :class="currentPage === p ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'"
+                            @click="currentPage = p">
+                            {{ p }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ДЕТАЛИ КУРСА -->
+        <main v-if="activePage === 'course-detail' && selectedCourse" class="flex-1 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+                <button class="btn-secondary-tw btn-sm-tw" @click="activePage = 'courses'">
+                    <i class="bi bi-arrow-left"></i> Назад ко всем курсам
+                </button>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="cursor-pointer hover:text-slate-600 dark:hover:text-slate-200" @click="activePage = 'home'">Главная</span>
+                    <span>/</span>
+                    <span class="cursor-pointer hover:text-slate-600 dark:hover:text-slate-200" @click="activePage = 'courses'">Курсы</span>
+                    <span>/</span>
+                    <span class="text-slate-800 dark:text-slate-200 font-medium truncate max-w-xs">{{ selectedCourse.title }}</span>
+                </div>
+            </div>
+
+            <div class="card-base p-6 sm:p-8 mb-8 border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300">{{ selectedCourse.language }}</span>
+                            <span class="badge-info">Уровень {{ selectedCourse.level }}</span>
+                            <span class="badge-success">{{ selectedCourse.status }}</span>
+                            <span class="flex items-center gap-1 text-xs text-amber-500 font-bold ml-2">
+                                <i class="bi bi-star-fill"></i> 4.9 (84 отзыва)
+                            </span>
+                        </div>
+                        <h1 class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white leading-tight">{{ selectedCourse.title }}</h1>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">{{ selectedCourse.description }}</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+                            <div class="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Длительность</span>
+                                <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{{ selectedCourse.duration || '3 месяца (48 ч)' }}</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Расписание</span>
+                                <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{{ selectedCourse.schedule || 'Вт / Чт 19:00' }}</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Мест в группе</span>
+                                <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Осталось {{ selectedCourse.seatsLeft || 3 }} из {{ selectedCourse.seats || 10 }}</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60">
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Формат</span>
+                                <span class="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400">Онлайн + Записи</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
+                        <span class="text-xs text-slate-400 font-semibold block">Стоимость полного курса</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">{{ selectedCourse.price }} BYN</span>
+                            <span class="text-xs text-slate-400">/ весь курс</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Доступна беспроцентная рассрочка на 3 месяца по {{ Math.round(selectedCourse.price / 3) }} BYN/мес.</p>
+                        <div class="border-t border-slate-100 dark:border-slate-700/60 pt-3 text-[11px] text-slate-400 space-y-1">
+                            <div class="flex items-center gap-1.5"><i class="bi bi-shield-check text-emerald-500"></i> Международный сертификат CEFR</div>
+                            <div class="flex items-center gap-1.5"><i class="bi bi-camera-video text-indigo-500"></i> Доступ к записям уроков навсегда</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+                <div class="lg:col-span-5 card-base p-6 border border-slate-200 dark:border-slate-800 space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Преподаватель курса</span>
+                        <span class="badge-success">Сертифицирован</span>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <img v-if="currentCourseTeacher.avatarUrl" :src="currentCourseTeacher.avatarUrl" :alt="currentCourseTeacher.name" class="w-20 h-20 rounded-2xl object-cover ring-4 ring-indigo-500/20 shadow-md shrink-0">
+                        <div v-else class="w-20 h-20 rounded-2xl bg-indigo-600 text-white font-bold text-2xl flex items-center justify-center shrink-0">{{ currentCourseTeacher.avatar }}</div>
+                        <div>
+                            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white leading-snug">{{ currentCourseTeacher.name }}</h3>
+                            <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">{{ currentCourseTeacher.language }} • {{ currentCourseTeacher.country }}</p>
+                            <div class="flex items-center gap-3 mt-2 text-xs">
+                                <span class="font-bold text-amber-500 flex items-center gap-0.5"><i class="bi bi-star-fill text-[11px]"></i> {{ currentCourseTeacher.rating }}</span>
+                                <span class="text-slate-400">• {{ currentCourseTeacher.experience }}</span>
+                                <span class="text-slate-400">• {{ currentCourseTeacher.students }} учеников</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 text-xs space-y-1">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 block mb-0.5"><i class="bi bi-award-fill text-amber-500 mr-1"></i> Квалификация & Дипломы:</span>
+                        <p class="text-slate-500 dark:text-slate-400 leading-relaxed">{{ currentCourseTeacher.education }}</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Методика и опыт</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{{ currentCourseTeacher.bio }}</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 card-base p-6 border border-slate-200 dark:border-slate-800 space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Учебная программа (Силлабус)</span>
+                        <span class="text-xs text-slate-400">4 тематических модуля</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div v-for="(module, idx) in (selectedCourse.syllabus || [
+                            { title: 'Модуль 1: Базовая лексика и погружение', desc: 'Освоение основных речевых конструкций, правильное произношение и снятие языкового барьера.' },
+                            { title: 'Модуль 2: Практическая грамматика', desc: 'Разбор ключевых грамматических правил без зубрежки на живых жизненных ситуациях.' },
+                            { title: 'Модуль 3: Разговорный интенсив', desc: 'Участие в моделируемых диалогах, дебатах и обсуждение актуальных тем с одногруппниками.' },
+                            { title: 'Модуль 4: Итоговая аттестация', desc: 'Сдача финального теста CEFR, защита проекта и вручение номерного сертификата.' }
+                        ])" :key="idx" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 transition-all hover:border-indigo-400">
+                            <div class="flex items-start gap-3">
+                                <span class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs flex items-center justify-center shrink-0">{{ idx + 1 }}</span>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">{{ module.title }}</h4>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{{ module.desc }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ad-slot format="banner" label="Партнёрская программа"
+                title="Подготовьтесь к экзамену со скидкой 20% на оригинальные учебные материалы издательства Oxford"
+                slot-id="ADS-COURSE-DETAIL-BANNER">
+            </ad-slot>
+        </main>
+
+        <!-- АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ -->
+        <main v-if="activePage === 'auth'" class="flex-1 py-10 max-w-6xl mx-auto px-4 sm:px-6 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+                <aside class="hidden lg:flex flex-col justify-between rounded-3xl p-8 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -left-16 -bottom-16 w-64 h-64 rounded-full bg-purple-400/20 blur-3xl pointer-events-none"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-11 h-11 rounded-xl bg-white text-indigo-700 flex items-center justify-center font-bold text-xl shadow-lg">
+                                <i class="bi bi-mortarboard-fill"></i>
+                            </div>
+                            <span class="font-extrabold text-xl tracking-tight">LINGUO</span>
+                        </div>
+                        <h2 class="text-3xl font-black leading-tight mb-3">Добро пожаловать<br>в онлайн-школу</h2>
+                        <p class="text-indigo-100 text-sm leading-relaxed max-w-sm">
+                            Более 40 курсов, преподаватели-носители языка и сертификаты CEFR. Войдите, чтобы записаться на курс и общаться с преподавателями.
+                        </p>
+                        <ul class="mt-8 space-y-3 text-sm">
+                            <li class="flex items-center gap-3"><i class="bi bi-check-circle-fill text-emerald-300"></i> Личный кабинет и прогресс</li>
+                            <li class="flex items-center gap-3"><i class="bi bi-check-circle-fill text-emerald-300"></i> Чат с преподавателями</li>
+                            <li class="flex items-center gap-3"><i class="bi bi-check-circle-fill text-emerald-300"></i> Записи занятий и материалы</li>
+                            <li class="flex items-center gap-3"><i class="bi bi-check-circle-fill text-emerald-300"></i> Номерной сертификат CEFR</li>
+                        </ul>
+                    </div>
+                    <div class="relative z-10 mt-8 pt-6 border-t border-white/20 text-[11px] text-indigo-200 flex items-center gap-2">
+                        <i class="bi bi-shield-lock"></i>
+                        Пароли хранятся в виде SHA-256 хэша. Сессия защищена.
+                    </div>
+                </aside>
+
+                <section class="card-base p-6 sm:p-8 shadow-xl">
+                    <div class="flex gap-2 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-6">
+                        <button type="button"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all"
+                            :class="authTab === 'login' ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
+                            @click="authTab = 'login'; resetAuthErrors()">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Вход
+                        </button>
+                        <button type="button"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all"
+                            :class="authTab === 'register' ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
+                            @click="authTab = 'register'; resetAuthErrors()">
+                            <i class="bi bi-person-plus me-1"></i> Регистрация
+                        </button>
+                    </div>
+
+                    <form @submit.prevent="authTab === 'login' ? handleLogin() : handleRegister()" class="space-y-4" novalidate>
+                        <div v-if="authTab === 'register'">
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Имя и фамилия</label>
+                            <div class="relative">
+                                <i class="bi bi-person absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input type="text" v-model="authForm.name" autocomplete="name" placeholder="Иван Иванов"
+                                    class="input-base pl-10" :class="authErrors.name ? 'border-red-500 focus:ring-red-500' : ''">
+                            </div>
+                            <p v-if="authErrors.name" class="mt-1 text-[11px] text-red-500 flex items-center gap-1">
+                                <i class="bi bi-exclamation-circle"></i>{{ authErrors.name }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Email</label>
+                            <div class="relative">
+                                <i class="bi bi-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input type="email" v-model="authForm.email" autocomplete="email" placeholder="you@example.com"
+                                    class="input-base pl-10" :class="authErrors.email ? 'border-red-500 focus:ring-red-500' : ''">
+                            </div>
+                            <p v-if="authErrors.email" class="mt-1 text-[11px] text-red-500 flex items-center gap-1">
+                                <i class="bi bi-exclamation-circle"></i>{{ authErrors.email }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400">Пароль</label>
+                                <button v-if="authTab === 'login'" type="button"
+                                    class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                                    @click="openResetModal">
+                                    Забыли пароль?
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <i class="bi bi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input :type="showPassword ? 'text' : 'password'" v-model="authForm.password"
+                                    :autocomplete="authTab === 'login' ? 'current-password' : 'new-password'"
+                                    placeholder="••••••••"
+                                    class="input-base pl-10 pr-10"
+                                    :class="authErrors.password ? 'border-red-500 focus:ring-red-500' : ''">
+                                <button type="button" @click="showPassword = !showPassword"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                                    :title="showPassword ? 'Скрыть пароль' : 'Показать пароль'">
+                                    <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                                </button>
+                            </div>
+                            <p v-if="authErrors.password" class="mt-1 text-[11px] text-red-500 flex items-center gap-1">
+                                <i class="bi bi-exclamation-circle"></i>{{ authErrors.password }}
+                            </p>
+                            <div v-if="authTab === 'register' && authForm.password" class="mt-2">
+                                <div class="flex gap-1 h-1.5">
+                                    <div class="flex-1 rounded-full transition-all" :class="passwordStrength >= 25 ? 'bg-rose-500' : 'bg-slate-200 dark:bg-slate-700'"></div>
+                                    <div class="flex-1 rounded-full transition-all" :class="passwordStrength >= 50 ? 'bg-amber-500' : 'bg-slate-200 dark:bg-slate-700'"></div>
+                                    <div class="flex-1 rounded-full transition-all" :class="passwordStrength >= 75 ? 'bg-sky-500' : 'bg-slate-200 dark:bg-slate-700'"></div>
+                                    <div class="flex-1 rounded-full transition-all" :class="passwordStrength >= 100 ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'"></div>
+                                </div>
+                                <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{{ passwordStrengthText }}</p>
+                            </div>
+                        </div>
+
+                        <div v-if="authTab === 'register'">
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Повторите пароль</label>
+                            <div class="relative">
+                                <i class="bi bi-lock-fill absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input :type="showPasswordConfirm ? 'text' : 'password'" v-model="authForm.passwordConfirm"
+                                    autocomplete="new-password" placeholder="••••••••"
+                                    class="input-base pl-10 pr-10"
+                                    :class="authErrors.passwordConfirm ? 'border-red-500 focus:ring-red-500' : ''">
+                                <button type="button" @click="showPasswordConfirm = !showPasswordConfirm"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                    <i :class="showPasswordConfirm ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                                </button>
+                            </div>
+                            <p v-if="authErrors.passwordConfirm" class="mt-1 text-[11px] text-red-500 flex items-center gap-1">
+                                <i class="bi bi-exclamation-circle"></i>{{ authErrors.passwordConfirm }}
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <label v-if="authTab === 'login'" class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+                                <input type="checkbox" v-model="authForm.rememberMe"
+                                    class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500">
+                                Запомнить меня
+                            </label>
+                            <label v-if="authTab === 'register'" class="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+                                <input type="checkbox" v-model="authForm.agreeTerms"
+                                    class="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500">
+                                <span>Согласен с <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline">условиями сервиса</a> и <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline">политикой конфиденциальности</a></span>
+                            </label>
+                        </div>
+                        <p v-if="authErrors.agreeTerms" class="text-[11px] text-red-500 flex items-center gap-1">
+                            <i class="bi bi-exclamation-circle"></i>{{ authErrors.agreeTerms }}
+                        </p>
+
+                        <button type="submit" class="btn-primary-tw btn-lg-tw w-full mt-2" :disabled="isAuthSubmitting">
+                            <template v-if="isAuthSubmitting">
+                                <i class="bi bi-arrow-repeat animate-spin"></i>
+                                {{ authTab === 'login' ? 'Вход...' : 'Регистрация...' }}
+                            </template>
+                            <template v-else>
+                                <i :class="authTab === 'login' ? 'bi bi-box-arrow-in-right' : 'bi bi-person-plus'"></i>
+                                {{ authTab === 'login' ? 'Войти' : 'Зарегистрироваться' }}
+                            </template>
+                        </button>
+                    </form>
+
+                    <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                            <i class="bi bi-lightning-charge-fill text-amber-500"></i> Демо-доступ для тестирования
+                        </p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" class="btn-secondary-tw btn-sm-tw justify-start" @click="quickLoginAs('admin')">
+                                <i class="bi bi-shield-lock-fill text-rose-500"></i>
+                                <span class="truncate">Админ</span>
+                            </button>
+                            <button type="button" class="btn-secondary-tw btn-sm-tw justify-start" @click="quickLoginAs('student')">
+                                <i class="bi bi-mortarboard-fill text-sky-500"></i>
+                                <span class="truncate">Студент</span>
+                            </button>
+                        </div>
+                        <p class="mt-2 text-[10px] text-slate-400 font-mono leading-relaxed">
+                            admin@linguo.by / admin123<br>
+                            student@linguo.by / student123
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- VOYAGER ADMIN (переверстано) -->
+        <main v-if="activePage === 'admin'" class="flex-1 py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Sidebar -->
+                <aside class="lg:w-64 shrink-0 rounded-2xl bg-slate-900 dark:bg-slate-950 text-slate-300 overflow-hidden shadow-xl">
+                    <div class="p-5 border-b border-white/10 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold">
+                            <i class="bi bi-compass"></i>
+                        </div>
+                        <span class="font-bold text-white tracking-wide">VOYAGER</span>
+                    </div>
+                    <nav class="p-3 space-y-1">
+                        <div class="px-3 py-2.5 rounded-lg bg-slate-800 text-white text-sm font-semibold flex items-center gap-3 border-l-2 border-sky-500">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </div>
+                        <div class="px-3 py-2.5 rounded-lg hover:bg-slate-800/60 text-sm flex items-center gap-3 cursor-pointer transition-colors">
+                            <i class="bi bi-people"></i> Пользователи
+                        </div>
+                        <div class="px-3 py-2.5 rounded-lg hover:bg-slate-800/60 text-sm flex items-center gap-3 cursor-pointer transition-colors">
+                            <i class="bi bi-book"></i> Курсы
+                        </div>
+                        <div class="px-3 py-2.5 rounded-lg hover:bg-slate-800/60 text-sm flex items-center gap-3 cursor-pointer transition-colors">
+                            <i class="bi bi-journal-text"></i> Логи
+                        </div>
+                    </nav>
+                </aside>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0 space-y-6">
+                    <div>
+                        <h1 class="text-2xl font-black text-slate-900 dark:text-white">Dashboard</h1>
+                        <p class="text-sm text-slate-500">Обзор ключевых метрик и управление ролями</p>
+                    </div>
+
+                    <!-- Stat cards -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="card-base p-4 flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ users.length }}</div>
+                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Пользователей</div>
+                            </div>
+                        </div>
+                        <div class="card-base p-4 flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="bi bi-book"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ courses.length }}</div>
+                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Курсов</div>
+                            </div>
+                        </div>
+                        <div class="card-base p-4 flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="bi bi-journal-text"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ logs.length }}</div>
+                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Событий</div>
+                            </div>
+                        </div>
+                        <div class="card-base p-4 flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shrink-0">
+                                <i class="bi bi-folder2"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ localFiles.length }}</div>
+                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Файлов</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users table with role change -->
+                    <div class="card-base p-0 overflow-hidden">
+                        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 dark:text-white">Пользователи и роли</h3>
+                            <span class="text-xs text-slate-400">{{ users.length }} записей</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase">
+                                    <tr>
+                                        <th class="p-3">Имя</th>
+                                        <th class="p-3">Email</th>
+                                        <th class="p-3">Роль</th>
+                                        <th class="p-3">Создан</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                    <tr v-for="u in users" :key="u.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                        <td class="p-3 font-semibold text-slate-900 dark:text-white">{{ u.name }}</td>
+                                        <td class="p-3 text-slate-500">{{ u.email }}</td>
+                                        <td class="p-3 min-w-[180px]">
+                                            <custom-select :model-value="u.role" :options="roleOptions" @change="changeUserRole(u, $event)" size="sm"></custom-select>
+                                        </td>
+                                        <td class="p-3 text-slate-400 text-xs">{{ u.createdAt }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ЛОГИ -->
+        <main v-if="activePage === 'logs'" class="flex-1 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="card-base p-0 overflow-hidden">
+                <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white">Журнал аудита действий (Log)</h3>
+                    <span class="text-xs text-slate-400">vue-json-compare diff</span>
+                </div>
+                <div class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                    <div v-for="l in filteredLogs" :key="l.id" class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div>
+                            <span class="font-bold text-slate-900 dark:text-white">{{ l.action }}</span> — {{ l.summary }}
+                            <span class="block text-slate-400 text-[10px]">{{ l.timestamp }} • Автор: {{ l.user }}</span>
+                        </div>
+                        <button v-if="l.before || l.after" class="btn-secondary-tw btn-sm-tw shrink-0" @click="openDiffModal(l)">
+                            <i class="bi bi-file-diff"></i> Сравнить (Diff)
+                        </button>
+                    </div>
+                    <div v-if="!filteredLogs.length" class="p-8 text-center text-slate-400">
+                        Пока нет событий. Совершите действие (вход, создание курса, смену роли) — и они появятся здесь.
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- API EXPLORER -->
+        <main v-if="activePage === 'api'" class="flex-1 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="card-base space-y-4">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white">REST API v1 Консоль</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="sm:col-span-1">
+                            <custom-select v-model="apiMethod" :options="apiMethodsOptions" placeholder="Метод"></custom-select>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <custom-select v-model="apiEndpoint" :options="apiEndpointsOptions" placeholder="Эндпоинт"></custom-select>
+                        </div>
+                    </div>
+                    <button class="btn-primary-tw btn-md-tw w-full" @click="executeApiRequest">Отправить HTTP-запрос</button>
+                </div>
+                <div class="card-base bg-slate-950 text-sky-400 font-mono text-xs overflow-auto max-h-80">
+                    <pre>{{ JSON.stringify(apiResponse, null, 2) }}</pre>
+                </div>
+            </div>
+        </main>
+
+        <!-- ФАЙЛЫ -->
+        <main v-if="activePage === 'files'" class="flex-1 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="mb-6">
+                <h1 class="text-2xl font-black text-slate-900 dark:text-white">Файлы проекта</h1>
+                <p class="text-sm text-slate-500">Локальное хранилище (localStorage) и Google Drive</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card-base">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <i class="bi bi-hdd text-indigo-500"></i> Локальное хранилище
+                    </h3>
+                    <div class="space-y-2">
+                        <div v-for="f in localFiles" :key="f.id" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold truncate">{{ f.name }}</p>
+                                <p class="text-[11px] text-slate-500">{{ f.uploadedAt }} · {{ (f.size/1024).toFixed(1) }} KB</p>
+                            </div>
+                            <button class="btn-danger-tw btn-sm-tw" @click="deleteLocalFile(f)" title="Удалить">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <p v-if="!localFiles.length" class="text-xs text-slate-400 text-center py-6">
+                            Пока нет файлов. Загрузите Excel на главной странице.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-base">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <i class="bi bi-google text-emerald-500"></i> Google Drive
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">Выгрузка дампа базы данных (демо-имитация, скачивается JSON-файл)</p>
+                    <button class="btn-brand-tw btn-md-tw w-full" @click="createGoogleDriveDump">
+                        <i class="bi bi-cloud-upload"></i> Выгрузить дамп
+                    </button>
+                    <p class="mt-3 text-[11px] text-slate-400">
+                        <i class="bi bi-info-circle"></i> Реальный Google Drive API требует OAuth-ключа (в демо не подключён)
+                    </p>
+                </div>
+            </div>
+        </main>
+
+        <!-- МОДАЛКА ОШИБКИ EXCEL -->
+        <div v-if="errorModalVisible"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+            @click="errorModalVisible = false">
+            <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-red-200 dark:border-red-900 space-y-4" @click.stop>
+                <div class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950 text-red-600 flex items-center justify-center text-2xl mx-auto">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <h3 class="text-center font-bold text-lg text-slate-900 dark:text-white">Неверный формат файла!</h3>
+                <p class="text-center text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Файл «<strong>{{ invalidFileInfo.name }}</strong>» не поддерживается. Разрешены только файлы
+                    Microsoft Excel: <strong>.xlsx, .xls</strong>.
+                </p>
+                <div class="flex gap-2">
+                    <button class="btn-primary-tw btn-md-tw w-full" @click="errorModalVisible = false">Понятно</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- МОДАЛКА КУРСА -->
+        <div v-if="courseModalVisible"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+            @click="courseModalVisible = false">
+            <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4" @click.stop>
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white">
+                    {{ isEditingCourse ? 'Редактировать курс' : 'Добавить новый курс' }}
+                </h3>
+                <form @submit.prevent="saveCourseAsync" class="space-y-3">
+                    <input type="text" v-model="courseForm.title" placeholder="Название курса" required class="input-base text-xs">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 block mb-1">Язык</label>
+                            <custom-select v-model="courseForm.language" :options="filterLanguageOptions.slice(1)" placeholder="Выберите язык" size="sm"></custom-select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 block mb-1">Уровень CEFR</label>
+                            <custom-select v-model="courseForm.level" :options="filterLevelOptions.slice(1)" placeholder="Выберите уровень" size="sm"></custom-select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" v-model="courseForm.teacher" placeholder="Преподаватель" required class="input-base text-xs">
+                        <input type="number" v-model="courseForm.price" placeholder="Цена (BYN)" required class="input-base text-xs">
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-secondary-tw btn-sm-tw" @click="courseModalVisible = false">Отмена</button>
+                        <button type="submit" class="btn-primary-tw btn-sm-tw">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- МОДАЛКА DIFF -->
+        <div v-if="diffModalVisible"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+            @click="diffModalVisible = false">
+            <div class="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[85vh] overflow-auto" @click.stop>
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Сравнение изменений объекта (vue-json-compare)</h3>
+                    <button class="btn-ghost-tw btn-sm-tw" @click="diffModalVisible = false">&times;</button>
+                </div>
+                <div v-if="selectedLogForDiff" class="space-y-2 text-xs">
+                    <div v-for="d in computeDiffRows(selectedLogForDiff.before, selectedLogForDiff.after)" :key="d.key"
+                        class="p-2.5 rounded-lg border flex gap-3" :class="{
+                             'bg-red-50 dark:bg-red-950/30 border-red-200': d.status === 'removed',
+                             'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200': d.status === 'added',
+                             'bg-amber-50 dark:bg-amber-950/30 border-amber-200': d.status === 'modified',
+                             'border-slate-200 dark:border-slate-800': d.status === 'unchanged'
+                         }">
+                        <span class="font-mono font-bold w-24 shrink-0">{{ d.key }}</span>
+                        <span class="line-through text-red-600 flex-1">{{ d.beforeValue }}</span>
+                        <span class="text-emerald-600 font-semibold flex-1">{{ d.afterValue }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- МОДАЛКА СБРОСА ПАРОЛЯ -->
+        <div v-if="resetModalVisible"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+            @click="resetModalVisible = false">
+            <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4" @click.stop>
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="bi bi-key-fill text-indigo-500"></i> Восстановление пароля
+                    </h3>
+                    <button type="button" class="btn-ghost-tw btn-sm-tw" @click="resetModalVisible = false">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div v-if="resetStep === 1" class="space-y-3">
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Введите email, указанный при регистрации. Мы отправим на него код подтверждения.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Email</label>
+                        <input type="email" v-model="resetEmail" placeholder="you@example.com" class="input-base" :class="resetErrors.email ? 'border-red-500' : ''">
+                        <p v-if="resetErrors.email" class="mt-1 text-[11px] text-red-500">{{ resetErrors.email }}</p>
+                    </div>
+                    <button type="button" class="btn-primary-tw btn-md-tw w-full" @click="submitResetEmail">
+                        Отправить код <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div v-if="resetStep === 2" class="space-y-3">
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Мы отправили код на <strong>{{ resetEmail }}</strong>. Введите его ниже.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Код из письма</label>
+                        <input type="text" v-model="resetCode" placeholder="1234" maxlength="4" class="input-base text-center text-2xl tracking-[0.5em] font-mono" :class="resetErrors.code ? 'border-red-500' : ''">
+                        <p v-if="resetErrors.code" class="mt-1 text-[11px] text-red-500">{{ resetErrors.code }}</p>
+                    </div>
+                    <button type="button" class="btn-primary-tw btn-md-tw w-full" @click="submitResetCode">
+                        Подтвердить код <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button type="button" class="btn-ghost-tw btn-sm-tw w-full" @click="resetStep = 1">
+                        <i class="bi bi-arrow-left"></i> Назад
+                    </button>
+                </div>
+
+                <div v-if="resetStep === 3" class="space-y-3">
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Придумайте новый пароль для аккаунта <strong>{{ resetEmail }}</strong>.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Новый пароль</label>
+                        <div class="relative">
+                            <input :type="showResetPassword ? 'text' : 'password'" v-model="resetNewPassword" placeholder="Минимум 8 символов" class="input-base pr-10" :class="resetErrors.newPassword ? 'border-red-500' : ''">
+                            <button type="button" @click="showResetPassword = !showResetPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <i :class="showResetPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                            </button>
+                        </div>
+                        <p v-if="resetErrors.newPassword" class="mt-1 text-[11px] text-red-500">{{ resetErrors.newPassword }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Повторите пароль</label>
+                        <input :type="showResetPassword ? 'text' : 'password'" v-model="resetNewPasswordConfirm" placeholder="Повторите пароль" class="input-base" :class="resetErrors.newPasswordConfirm ? 'border-red-500' : ''">
+                        <p v-if="resetErrors.newPasswordConfirm" class="mt-1 text-[11px] text-red-500">{{ resetErrors.newPasswordConfirm }}</p>
+                    </div>
+                    <button type="button" class="btn-primary-tw btn-md-tw w-full" @click="submitNewPassword">
+                        Сохранить пароль <i class="bi bi-check-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOASTS -->
+        <div class="fixed bottom-4 right-4 z-50 space-y-2 max-w-sm">
+            <div v-for="t in toasts" :key="t.id"
+                class="p-3.5 rounded-2xl shadow-xl text-xs flex items-center gap-2.5 border transition-all animate-bounce"
+                :class="{
+                     'bg-white dark:bg-slate-900 border-emerald-500 text-slate-900 dark:text-white': t.type === 'success',
+                     'bg-white dark:bg-slate-900 border-red-500 text-slate-900 dark:text-white': t.type === 'error',
+                     'bg-white dark:bg-slate-900 border-sky-500 text-slate-900 dark:text-white': t.type === 'info'
+                 }">
+                <i v-if="t.type === 'success'" class="bi bi-check-circle-fill text-emerald-500 text-base"></i>
+                <i v-else-if="t.type === 'error'" class="bi bi-exclamation-triangle-fill text-red-500 text-base"></i>
+                <i v-else class="bi bi-info-circle-fill text-sky-500 text-base"></i>
+                <div>
+                    <strong class="block">{{ t.title }}</strong>
+                    <span>{{ t.message }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ФУТЕР -->
+        <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-8 text-center text-xs text-slate-400">
+            <p>© 2026 LINGUO Language School • Минский колледж предпринимательства • ПО-2313</p>
+            <p class="mt-1">Vue.js • Excel • личный кабинет</p>
+        </footer>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
