@@ -225,11 +225,18 @@
                             Интерактивные курсы, преподаватели-носители языка и гибкий график обучения для любого уровня
                             подготовки от A1 до C2.
                         </p>
-                        <div class="flex flex-wrap gap-3">
-                            <button class="btn-primary-tw btn-lg-tw" @click="activePage = 'courses'">
-                                <i class="bi bi-grid-fill"></i> Каталог курсов ({{ courses.length }})
-                            </button>
-                        </div>
+                        <div class="flex flex-wrap items-center gap-4">
+    <!-- Кнопка "Каталог курсов" -->
+    <button @click="activePage = 'courses'"
+        class="group relative inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-indigo-600 rounded-2xl hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-1 active:scale-95">
+        <i class="bi bi-grid-fill text-lg group-hover:rotate-12 transition-transform"></i>
+        <span>Каталог курсов</span>
+        <!-- Бейдж с количеством -->
+        <span class="ml-1 px-2.5 py-0.5 text-xs font-black bg-white/20 text-white rounded-full">
+            {{ courses.length }}
+        </span>
+    </button>
+</div>
                     </div>
                     <div class="lg:col-span-5">
                         <img src="images/hero_learning_1791364551777.jpg" alt="Онлайн обучение"
