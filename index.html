@@ -314,8 +314,6 @@
                 </ad-slot>
             </section>
         </main>
-
-        <!-- ЧАТ -->
                 <!-- ЧАТ -->
         <main v-if="activePage === 'chat'" class="flex-1 py-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
             <div class="mb-6">
@@ -438,9 +436,9 @@
                     <!-- Поле ввода -->
                     <div class="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
                         <div class="flex items-end gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
-                            <button class="p-2 text-slate-400 hover:text-indigo-600 transition-colors rounded-xl hover:bg-white dark:hover:bg-slate-800" title="Прикрепить файл">
+                            <!-- <button class="p-2 text-slate-400 hover:text-indigo-600 transition-colors rounded-xl hover:bg-white dark:hover:bg-slate-800" title="Прикрепить файл">
                                 <i class="bi bi-paperclip text-lg"></i>
-                            </button>
+                            </button> -->
                             <input type="text" v-model="newMessageText" @keyup.enter="sendChatMessage"
                                 placeholder="Напишите сообщение..."
                                 class="flex-1 bg-transparent border-none text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-0 py-2.5">
