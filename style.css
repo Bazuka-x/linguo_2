@@ -13,11 +13,11 @@
     --font-main: 'Inter', sans-serif;
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 
-    /* Voyager & Accent Colors */
-    --voyager-dark: #1b242f;
-    --voyager-nav: #222d32;
-    --voyager-active: #22a7f0;
-    --voyager-accent: #f39c12;
+    /* Voyager & Accent Colors (Light mode default) */
+    --voyager-dark: #f8fafc;
+    --voyager-nav: #ffffff;
+    --voyager-active: #0284c7;
+    --voyager-accent: #f59e0b;
     --success-green: #2ecc71;
     --danger-red: #e74c3c;
     --warning-orange: #f39c12;
@@ -685,24 +685,37 @@ ul {
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
     margin: 30px 0;
-    background: #f8fafc;
+    background: #ffffff;
+}
+.dark .voyager-wrapper {
+    background: #0f172a;
+    border-color: #334155;
 }
 
 .voyager-sidebar {
     width: 250px;
-    background: var(--voyager-nav);
-    color: #abb9c7;
+    background: #ffffff;
+    color: #475569;
+    border-right: 1px solid #e2e8f0;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
 }
+.dark .voyager-sidebar {
+    background: #1e293b;
+    color: #94a3b8;
+    border-right-color: #334155;
+}
 
 .voyager-brand {
-    padding: 24px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
     gap: 12px;
+}
+.dark .voyager-brand {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .voyager-helm-icon {
@@ -720,8 +733,11 @@ ul {
 .voyager-title {
     font-size: 16px;
     font-weight: 700;
-    color: #fff;
+    color: #0f172a;
     letter-spacing: 1.5px;
+}
+.dark .voyager-title {
+    color: #fff;
 }
 
 .voyager-menu {
@@ -738,26 +754,42 @@ ul {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-    color: #abb9c7;
+    color: #475569;
     border-left: 3px solid transparent;
+}
+.dark .voyager-nav-item {
+    color: #94a3b8;
 }
 
 .voyager-nav-item:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+.dark .voyager-nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #fff;
 }
 
 .voyager-nav-item.active {
-    background: #1e282c;
-    color: #fff;
+    background: #f0f9ff;
+    color: #0284c7;
+    border-left-color: var(--voyager-active);
+    font-weight: 600;
+}
+.dark .voyager-nav-item.active {
+    background: #0f172a;
+    color: #38bdf8;
     border-left-color: var(--voyager-active);
 }
 
 .voyager-content {
     flex: 1;
     padding: 30px;
-    background: #fff;
+    background: #f8fafc;
     overflow-y: auto;
+}
+.dark .voyager-content {
+    background: #0b1220;
 }
 
 .stat-widget-grid {

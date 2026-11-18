@@ -981,6 +981,229 @@ const app = createApp({
             showToast(`Роль ${u.email} изменена на ${newRole.toUpperCase()}`, 'success');
         };
 
+        // --- VOYAGER АДМИНКА РАСШИРЕНИЕ ---
+        const voyagerTab = ref('dashboard'); // 'dashboard' | 'users' | 'courses' | 'logs'
+        const voyagerUserSearch = ref('');
+        const voyagerUserRoleFilter = ref('all');
+        const voyagerUserRoleOptions = [
+            { value: 'all', label: 'Все роли' },
+            { value: 'admin', label: 'Администратор' },
+            { value: 'student', label: 'Студент' }
+        ];
+
+        const filteredUsers = computed(() => {
+            const q = (voyagerUserSearch.value || '').trim().toLowerCase();
+            return users.value.filter(u => {
+                const matchRole = voyagerUserRoleFilter.value === 'all' || u.role === voyagerUserRoleFilter.value;
+                const matchSearch = !q ||
+                    (u.name && u.name.toLowerCase().includes(q)) ||
+                    (u.email && u.email.toLowerCase().includes(q));
+                return matchRole && matchSearch;
+            });
+        });
+
+        const userModalVisible = ref(false);
+        const isEditingUser = ref(false);
+        const userForm = reactive({
+            id: null,
+            name: '',
+            email: '',
+            password: '',
+            role: 'student',
+            status: 'Активен'
+        });
+
+        const openAddUserModal = () => {
+            isEditingUser.value = false;
+            userForm.id = null;
+            userForm.name = '';
+            userForm.email = '';
+            userForm.password = '';
+            userForm.role = 'student';
+            userForm.status = 'Активен';
+            userModalVisible.value = true;
+        };
+
+        const openEditUserModal = (u) => {
+            if (!u) return;
+            isEditingUser.value = true;
+            userForm.id = u.id;
+            userForm.name = u.name;
+            userForm.email = u.email;
+            userForm.password = '';
+            userForm.role = u.role;
+            userForm.status = u.status || 'Активен';
+            userModalVisible.value = true;
+        };
+
+        const saveUserAsync = async () => {
+            const name = (userForm.name || '').trim();
+            const email = (userForm.email || '').trim().toLowerCase();
+
+            if (!name || !email) {
+                showToast('Пожалуйста, укажите имя и email', 'error');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                showToast('Некорректный формат email адреса', 'error');
+                return;
+            }
+
+            if (isEditingUser.value) {
+                const found = users.value.find(u => u.id === userForm.id);
+                if (!found) {
+                    showToast('Пользователь не найден', 'error');
+                    return;
+                }
+                const before = { ...found };
+                found.name = name;
+                found.email = email;
+                found.role = userForm.role;
+                found.status = userForm.status;
+
+                if (userForm.password && userForm.password.trim()) {
+                    found.password = userForm.password.trim();
+                    found.passwordHash = await hashPassword(email, userForm.password.trim());
+                }
+
+                if (currentUser.value && currentUser.value.id === found.id) {
+                    currentUser.value.name = name;
+                    currentUser.value.email = email;
+                    currentUser.value.role = found.role;
+                    currentUser.value.status = found.status;
+                }
+
+                addAuditLog('USER_UPDATE', 'Users', `Обновлены данные пользователя ${email}`, before, { ...found });
+                syncToStorage();
+                showToast(`Пользователь ${name} успешно обновлен`, 'success');
+            } else {
+                const exists = users.value.some(u => u.email.toLowerCase() === email);
+                if (exists) {
+                    showToast('Пользователь с таким email уже существует', 'error');
+                    return;
+                }
+
+                const pwd = (userForm.password && userForm.password.trim()) ? userForm.password.trim() : '12345678';
+                const passwordHash = await hashPassword(email, pwd);
+
+                const newUser = {
+                    id: Date.now(),
+                    name,
+                    email,
+                    password: pwd,
+                    passwordHash,
+                    role: userForm.role,
+                    status: userForm.status,
+                    createdAt: new Date().toISOString().substring(0, 10)
+                };
+
+                users.value.push(newUser);
+                addAuditLog('USER_CREATE', 'Users', `Создан новый аккаунт ${email} (${userForm.role})`, null, { ...newUser });
+                syncToStorage();
+                showToast(`Пользователь ${name} успешно создан`, 'success');
+            }
+
+            userModalVisible.value = false;
+        };
+
+        const deleteUserAsync = (u) => {
+            if (!u) return;
+            if (currentUser.value && currentUser.value.email.toLowerCase() === u.email.toLowerCase()) {
+                showToast('Нельзя удалить текущего авторизованного администратора', 'error');
+                return;
+            }
+            if (!confirm(`Вы действительно хотите удалить пользователя ${u.name} (${u.email})?`)) {
+                return;
+            }
+            const before = { ...u };
+            users.value = users.value.filter(item => item.id !== u.id);
+            addAuditLog('USER_DELETE', 'Users', `Удален пользователь ${u.email}`, before, null);
+            syncToStorage();
+            showToast(`Пользователь ${u.name} удален`, 'info');
+        };
+
+        const toggleUserStatus = (u) => {
+            if (!u) return;
+            const before = { ...u };
+            u.status = (u.status === 'Активен') ? 'Заблокирован' : 'Активен';
+            addAuditLog('USER_STATUS', 'Users', `Статус ${u.email} изменен на ${u.status}`, before, { ...u });
+            syncToStorage();
+            showToast(`Статус ${u.name}: ${u.status}`, 'info');
+        };
+
+        const exportUsersExcel = () => {
+            try {
+                if (typeof XLSX === 'undefined') {
+                    showToast('Библиотека XLSX недоступна', 'error');
+                    return;
+                }
+                const data = users.value.map(u => ({
+                    'ID': u.id,
+                    'Имя': u.name,
+                    'Email': u.email,
+                    'Роль': u.role === 'admin' ? 'Администратор' : 'Студент',
+                    'Статус': u.status || 'Активен',
+                    'Дата создания': u.createdAt || ''
+                }));
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Пользователи');
+                XLSX.writeFile(wb, 'linguo_voyager_users.xlsx');
+                showToast('Список пользователей успешно выгружен в Excel', 'success');
+            } catch (e) {
+                showToast('Ошибка выгрузки: ' + e.message, 'error');
+            }
+        };
+
+        // Поиск по курсам и логам внутри Voyager
+        const voyagerCourseSearch = ref('');
+        const filteredVoyagerCourses = computed(() => {
+            const q = (voyagerCourseSearch.value || '').trim().toLowerCase();
+            if (!q) return courses.value;
+            return courses.value.filter(c =>
+                (c.title && c.title.toLowerCase().includes(q)) ||
+                (c.language && c.language.toLowerCase().includes(q)) ||
+                (c.teacher && c.teacher.toLowerCase().includes(q)) ||
+                (c.level && c.level.toLowerCase().includes(q))
+            );
+        });
+
+        const voyagerLogSearch = ref('');
+        const filteredVoyagerLogs = computed(() => {
+            const q = (voyagerLogSearch.value || '').trim().toLowerCase();
+            if (!q) return logs.value;
+            return logs.value.filter(l =>
+                (l.action && l.action.toLowerCase().includes(q)) ||
+                (l.summary && l.summary.toLowerCase().includes(q)) ||
+                (l.user && l.user.toLowerCase().includes(q)) ||
+                (l.target && l.target.toLowerCase().includes(q))
+            );
+        });
+
+        const clearVoyagerLogs = () => {
+            if (!logs.value.length) {
+                showToast('Журнал логов уже пуст', 'info');
+                return;
+            }
+            if (!confirm('Вы уверены, что хотите очистить весь журнал аудита?')) return;
+            logs.value = [];
+            syncToStorage();
+            showToast('Журнал аудита очищен', 'success');
+        };
+
+        const exportLogsJson = () => {
+            try {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs.value, null, 2));
+                const dlAnchorElem = document.createElement('a');
+                dlAnchorElem.setAttribute("href", dataStr);
+                dlAnchorElem.setAttribute("download", `linguo_audit_logs_${new Date().toISOString().substring(0, 10)}.json`);
+                dlAnchorElem.click();
+                showToast('Логи выгружены в JSON', 'success');
+            } catch (e) {
+                showToast('Ошибка выгрузки логов: ' + e.message, 'error');
+            }
+        };
+
         // --- УВЕДОМЛЕНИЯ ---
         const toasts = ref([]);
         const showToast = (message, type = 'info', title = '') => {
@@ -1086,6 +1309,12 @@ const app = createApp({
             kanbanTasks, userKanbanTasks, newKanbanTitle, kanbanTodo, kanbanInProgress, kanbanDone, moveKanbanTask, addKanbanTask,
 
             apiMethod, apiEndpoint, apiMethodsOptions, apiEndpointsOptions, apiResponse, executeApiRequest, roleOptions, changeUserRole,
+
+            // Voyager Admin
+            voyagerTab, voyagerUserSearch, voyagerUserRoleFilter, voyagerUserRoleOptions, filteredUsers,
+            userModalVisible, isEditingUser, userForm, openAddUserModal, openEditUserModal, saveUserAsync,
+            deleteUserAsync, toggleUserStatus, exportUsersExcel,
+            voyagerCourseSearch, filteredVoyagerCourses, voyagerLogSearch, filteredVoyagerLogs, clearVoyagerLogs, exportLogsJson,
 
             profileFollowers, profileFollowed, toggleFollow, billingAnnual,
 

@@ -117,7 +117,7 @@
                         <button v-if="currentUser && currentUser.role === 'admin'"
                             class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
                             :class="activePage === 'admin' ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                            @click="activePage = 'admin'">
+                            @click="activePage = 'admin'; voyagerTab = 'dashboard'">
                             Voyager Админка
                         </button>
                         <button v-if="currentUser && currentUser.role === 'admin'"
@@ -189,7 +189,7 @@
                 <button v-if="currentUser && currentUser.role === 'admin'"
                     class="w-full text-left px-3 py-2.5 rounded-xl font-medium text-sm flex items-center justify-between"
                     :class="activePage === 'admin' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'"
-                    @click="activePage = 'admin'; mobileMenuOpen = false">
+                    @click="activePage = 'admin'; voyagerTab = 'dashboard'; mobileMenuOpen = false">
                     <span>Voyager Админка</span>
                     <i class="bi bi-shield-lock"></i>
                 </button>
@@ -895,107 +895,489 @@
             </div>
         </main>
 
-        <!-- VOYAGER ADMIN (переверстано) -->
+        <!-- VOYAGER ADMIN -->
         <main v-if="activePage === 'admin'" class="flex-1 py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div class="flex flex-col lg:flex-row gap-6">
-                <!-- Sidebar -->
-                <aside class="lg:w-64 shrink-0 rounded-2xl bg-slate-900 dark:bg-slate-950 text-slate-300 overflow-hidden shadow-xl">
-                    <div class="p-5 border-b border-white/10 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold">
-                            <i class="bi bi-compass"></i>
+                <!-- Sidebar (Светлая тема по умолчанию, поддержка тёмной темы) -->
+                <aside class="lg:w-64 shrink-0 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 overflow-hidden shadow-sm flex flex-col justify-between">
+                    <div>
+                        <!-- Логотип Voyager -->
+                        <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors" @click="voyagerTab = 'dashboard'">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold shadow-sm shadow-sky-500/25">
+                                    <i class="bi bi-compass"></i>
+                                </div>
+                                <div>
+                                    <span class="font-extrabold text-slate-900 dark:text-white tracking-wide text-sm block leading-none">VOYAGER</span>
+                                    <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Панель управления</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300">v2.0</span>
                         </div>
-                        <span class="font-bold text-white tracking-wide">VOYAGER</span>
+
+                        <!-- Навигационное меню -->
+                        <nav class="p-3 space-y-1">
+                            <button type="button"
+                                class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-all"
+                                :class="voyagerTab === 'dashboard' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 font-semibold shadow-sm border-l-4 border-sky-500' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'"
+                                @click="voyagerTab = 'dashboard'">
+                                <span class="flex items-center gap-3">
+                                    <i class="bi bi-speedometer2 text-base" :class="voyagerTab === 'dashboard' ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400'"></i> Dashboard
+                                </span>
+                                <i class="bi bi-chevron-right text-xs opacity-40"></i>
+                            </button>
+
+                            <button type="button"
+                                class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-all"
+                                :class="voyagerTab === 'users' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 font-semibold shadow-sm border-l-4 border-sky-500' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'"
+                                @click="voyagerTab = 'users'">
+                                <span class="flex items-center gap-3">
+                                    <i class="bi bi-people text-base" :class="voyagerTab === 'users' ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400'"></i> Пользователи
+                                </span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">{{ users.length }}</span>
+                            </button>
+
+                            <button type="button"
+                                class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-all"
+                                :class="voyagerTab === 'courses' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 font-semibold shadow-sm border-l-4 border-sky-500' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'"
+                                @click="voyagerTab = 'courses'">
+                                <span class="flex items-center gap-3">
+                                    <i class="bi bi-book text-base" :class="voyagerTab === 'courses' ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400'"></i> Курсы
+                                </span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">{{ courses.length }}</span>
+                            </button>
+
+                            <button type="button"
+                                class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-all"
+                                :class="voyagerTab === 'logs' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 font-semibold shadow-sm border-l-4 border-sky-500' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'"
+                                @click="voyagerTab = 'logs'">
+                                <span class="flex items-center gap-3">
+                                    <i class="bi bi-journal-text text-base" :class="voyagerTab === 'logs' ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400'"></i> Логи
+                                </span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">{{ logs.length }}</span>
+                            </button>
+
+                            <div class="pt-3 pb-1 border-t border-slate-100 dark:border-slate-800 my-2">
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3.5 mb-1.5">Разделы системы</div>
+                                <button type="button"
+                                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white flex items-center gap-3 transition-colors"
+                                    @click="activePage = 'files'">
+                                    <i class="bi bi-folder2 text-purple-500 text-sm"></i> Файлы и Drive
+                                </button>
+                                <button type="button"
+                                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white flex items-center gap-3 transition-colors"
+                                    @click="activePage = 'api'">
+                                    <i class="bi bi-code-slash text-cyan-500 text-sm"></i> REST API v1
+                                </button>
+                                <button type="button"
+                                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white flex items-center gap-3 transition-colors"
+                                    @click="activePage = 'courses'">
+                                    <i class="bi bi-grid text-emerald-500 text-sm"></i> Публичный каталог
+                                </button>
+                            </div>
+                        </nav>
                     </div>
-                    <nav class="p-3 space-y-1">
-                        <div class="px-3 py-2.5 rounded-lg bg-slate-800 text-white text-sm font-semibold flex items-center gap-3 border-l-2 border-sky-500">
-                            <i class="bi bi-speedometer2"></i> Dashboard
+
+                    <!-- Карточка пользователя внизу сайдбара -->
+                    <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 m-2.5 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-300 font-bold flex items-center justify-center text-xs shrink-0">
+                                {{ currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'A' }}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ currentUser?.name || 'Администратор' }}</div>
+                                <div class="text-[10px] text-slate-400 truncate">{{ currentUser?.email }}</div>
+                            </div>
                         </div>
-                        <div class="px-3 py-2.5 rounded-lg hover:bg-slate-800/60 text-sm flex items-center gap-3 cursor-pointer transition-colors">
-                            <i class="bi bi-people"></i> Пользователи
-                        </div>
-                        <div class="px-3 py-2.5 rounded-lg hover:bg-slate-800/60 text-sm flex items-center gap-3 cursor-pointer transition-colors">
-                            <i class="bi bi-book"></i> Курсы
-                        </div>
-                        <div class="px-3 py-2.5 rounded-lg hover:bg-slate-800/60 text-sm flex items-center gap-3 cursor-pointer transition-colors">
-                            <i class="bi bi-journal-text"></i> Логи
-                        </div>
-                    </nav>
+                        <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors" @click="handleLogout" title="Выход из аккаунта">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </button>
+                    </div>
                 </aside>
 
-                <!-- Content -->
+                <!-- Контент админки (Светлый стиль в светлой теме) -->
                 <div class="flex-1 min-w-0 space-y-6">
-                    <div>
-                        <h1 class="text-2xl font-black text-slate-900 dark:text-white">Dashboard</h1>
-                        <p class="text-sm text-slate-500">Обзор ключевых метрик и управление ролями</p>
+                    <!-- Заголовок и быстрые кнопки действий -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-2xl font-black text-slate-900 dark:text-white">
+                                    {{ voyagerTab === 'dashboard' ? 'Dashboard' : voyagerTab === 'users' ? 'Управление пользователями' : voyagerTab === 'courses' ? 'Управление курсами' : 'Журнал аудита' }}
+                                </h1>
+                                <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold"
+                                    :class="voyagerTab === 'dashboard' ? 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300' : voyagerTab === 'users' ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300' : voyagerTab === 'courses' ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'">
+                                    {{ voyagerTab === 'dashboard' ? 'Метрики' : voyagerTab === 'users' ? 'Пользователи' : voyagerTab === 'courses' ? 'Курсы' : 'Логи' }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                                {{ voyagerTab === 'dashboard' ? 'Обзор ключевых метрик, управление ролями и быстрые действия' : voyagerTab === 'users' ? 'Создание, редактирование, назначение ролей и блокировка учетных записей' : voyagerTab === 'courses' ? 'Каталог, редактирование параметров и создание новых программ обучения' : 'Журнал событий системы и детальное сравнение изменений объектов (Diff)' }}
+                            </p>
+                        </div>
+
+                        <!-- Кнопки быстрых действий -->
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button v-if="voyagerTab !== 'dashboard'" type="button" class="btn-ghost-tw btn-sm-tw" @click="voyagerTab = 'dashboard'">
+                                <i class="bi bi-arrow-left"></i> На дашборд
+                            </button>
+                            <button type="button" class="btn-primary-tw btn-sm-tw" @click="openAddUserModal">
+                                <i class="bi bi-person-plus-fill"></i> Новый пользователь
+                            </button>
+                            <button type="button" class="btn-secondary-tw btn-sm-tw" @click="openAddCourseModal">
+                                <i class="bi bi-plus-circle"></i> Новый курс
+                            </button>
+                            <button type="button" class="btn-secondary-tw btn-sm-tw" @click="exportUsersExcel" title="Выгрузить пользователей в Excel">
+                                <i class="bi bi-file-earmark-spreadsheet text-emerald-600"></i> Excel
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Stat cards -->
+                    <!-- Интерактивные карточки метрик (Кликабельные кнопки) -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="card-base p-4 flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xl shrink-0">
-                                <i class="bi bi-people"></i>
+                        <!-- Карточка: Пользователи -->
+                        <button type="button"
+                            class="card-base p-4 text-left flex items-center justify-between group hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-md transition-all cursor-pointer"
+                            :class="{ 'ring-2 ring-sky-500 bg-sky-50/50 dark:bg-sky-950/20': voyagerTab === 'users' }"
+                            @click="voyagerTab = 'users'">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-11 h-11 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-2xl font-black text-slate-900 dark:text-white">{{ users.length }}</div>
+                                    <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Пользователей</div>
+                                </div>
                             </div>
-                            <div class="min-w-0">
-                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ users.length }}</div>
-                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Пользователей</div>
+                            <i class="bi bi-arrow-right text-slate-300 dark:text-slate-600 group-hover:text-sky-500 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
+                        <!-- Карточка: Курсы -->
+                        <button type="button"
+                            class="card-base p-4 text-left flex items-center justify-between group hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer"
+                            :class="{ 'ring-2 ring-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20': voyagerTab === 'courses' }"
+                            @click="voyagerTab = 'courses'">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-2xl font-black text-slate-900 dark:text-white">{{ courses.length }}</div>
+                                    <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Курсов</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-base p-4 flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
-                                <i class="bi bi-book"></i>
+                            <i class="bi bi-arrow-right text-slate-300 dark:text-slate-600 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
+                        <!-- Карточка: События -->
+                        <button type="button"
+                            class="card-base p-4 text-left flex items-center justify-between group hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all cursor-pointer"
+                            :class="{ 'ring-2 ring-amber-500 bg-amber-50/50 dark:bg-amber-950/20': voyagerTab === 'logs' }"
+                            @click="voyagerTab = 'logs'">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                                    <i class="bi bi-journal-text"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-2xl font-black text-slate-900 dark:text-white">{{ logs.length }}</div>
+                                    <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Событий</div>
+                                </div>
                             </div>
-                            <div class="min-w-0">
-                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ courses.length }}</div>
-                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Курсов</div>
+                            <i class="bi bi-arrow-right text-slate-300 dark:text-slate-600 group-hover:text-amber-500 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
+                        <!-- Карточка: Файлы -->
+                        <button type="button"
+                            class="card-base p-4 text-left flex items-center justify-between group hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-md transition-all cursor-pointer"
+                            @click="activePage = 'files'">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-11 h-11 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                                    <i class="bi bi-folder2"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-2xl font-black text-slate-900 dark:text-white">{{ localFiles.length }}</div>
+                                    <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Файлов</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-base p-4 flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shrink-0">
-                                <i class="bi bi-journal-text"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ logs.length }}</div>
-                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Событий</div>
-                            </div>
-                        </div>
-                        <div class="card-base p-4 flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shrink-0">
-                                <i class="bi bi-folder2"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="text-2xl font-black text-slate-900 dark:text-white">{{ localFiles.length }}</div>
-                                <div class="text-[11px] text-slate-500 uppercase font-semibold truncate">Файлов</div>
-                            </div>
-                        </div>
+                            <i class="bi bi-arrow-right text-slate-300 dark:text-slate-600 group-hover:text-purple-500 group-hover:translate-x-1 transition-all"></i>
+                        </button>
                     </div>
 
-                    <!-- Users table with role change -->
-                    <div class="card-base p-0 overflow-hidden">
-                        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                            <h3 class="font-bold text-slate-900 dark:text-white">Пользователи и роли</h3>
-                            <span class="text-xs text-slate-400">{{ users.length }} записей</span>
+                    <!-- ВКЛАДКА 1 & 2: DASHBOARD И ПОЛЬЗОВАТЕЛИ (Таблица пользователей с поиском и действиями) -->
+                    <div v-if="voyagerTab === 'dashboard' || voyagerTab === 'users'" class="card-base p-0 overflow-hidden">
+                        <div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-slate-900">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i class="bi bi-people-fill text-sky-500"></i> Пользователи и роли
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Управление доступом, смена ролей и блокировка пользователей</p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <!-- Поле поиска -->
+                                <div class="relative w-full sm:w-56">
+                                    <input type="text" v-model="voyagerUserSearch" placeholder="Поиск по имени, email..."
+                                        class="input-base text-xs py-1.5 pl-8 pr-7">
+                                    <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                    <button v-if="voyagerUserSearch" @click="voyagerUserSearch = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                        <i class="bi bi-x-circle-fill text-xs"></i>
+                                    </button>
+                                </div>
+                                <!-- Фильтр по роли -->
+                                <div class="w-36">
+                                    <custom-select v-model="voyagerUserRoleFilter" :options="voyagerUserRoleOptions" size="sm"></custom-select>
+                                </div>
+                                <button type="button" class="btn-primary-tw btn-sm-tw" @click="openAddUserModal">
+                                    <i class="bi bi-plus-lg"></i> Добавить
+                                </button>
+                            </div>
                         </div>
+
+                        <!-- Таблица пользователей -->
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm">
                                 <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase">
                                     <tr>
-                                        <th class="p-3">Имя</th>
-                                        <th class="p-3">Email</th>
-                                        <th class="p-3">Роль</th>
-                                        <th class="p-3">Создан</th>
+                                        <th class="p-3.5">Пользователь</th>
+                                        <th class="p-3.5">Email</th>
+                                        <th class="p-3.5">Роль в системе</th>
+                                        <th class="p-3.5 text-center">Статус</th>
+                                        <th class="p-3.5">Создан</th>
+                                        <th class="p-3.5 text-right">Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                                    <tr v-for="u in users" :key="u.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                                        <td class="p-3 font-semibold text-slate-900 dark:text-white">{{ u.name }}</td>
-                                        <td class="p-3 text-slate-500">{{ u.email }}</td>
-                                        <td class="p-3 min-w-[180px]">
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+                                    <tr v-for="u in filteredUsers" :key="u.id" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                        <td class="p-3.5">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold flex items-center justify-center text-xs shrink-0 border border-slate-200 dark:border-slate-700">
+                                                    {{ u.name ? u.name.charAt(0).toUpperCase() : 'U' }}
+                                                </div>
+                                                <div>
+                                                    <span class="font-semibold text-slate-900 dark:text-white block">{{ u.name }}</span>
+                                                    <span class="text-[11px] text-slate-400">ID: {{ u.id }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-3.5 text-slate-600 dark:text-slate-400 font-mono text-xs">{{ u.email }}</td>
+                                        <td class="p-3.5 min-w-[200px]">
                                             <custom-select :model-value="u.role" :options="roleOptions" @change="changeUserRole(u, $event)" size="sm"></custom-select>
                                         </td>
-                                        <td class="p-3 text-slate-400 text-xs">{{ u.createdAt }}</td>
+                                        <td class="p-3.5 text-center">
+                                            <button type="button"
+                                                class="px-2.5 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                                                :class="(u.status || 'Активен') === 'Активен' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 hover:bg-emerald-200' : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 hover:bg-rose-200'"
+                                                @click="toggleUserStatus(u)"
+                                                :title="'Нажмите, чтобы переключить статус (' + (u.status || 'Активен') + ')'">
+                                                <span class="w-1.5 h-1.5 rounded-full" :class="(u.status || 'Активен') === 'Активен' ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                                                {{ u.status || 'Активен' }}
+                                            </button>
+                                        </td>
+                                        <td class="p-3.5 text-slate-400 text-xs whitespace-nowrap">{{ u.createdAt || '2026-01-01' }}</td>
+                                        <td class="p-3.5 text-right whitespace-nowrap">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button type="button" class="p-1.5 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors"
+                                                    @click="openEditUserModal(u)" title="Редактировать">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 transition-colors"
+                                                    @click="deleteUserAsync(u)" title="Удалить">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr v-if="!filteredUsers.length">
+                                        <td colspan="6" class="p-8 text-center text-slate-400">
+                                            <div class="py-4 space-y-2">
+                                                <i class="bi bi-person-x text-3xl text-slate-300 dark:text-slate-600"></i>
+                                                <p>Пользователи не найдены по заданным критериям.</p>
+                                                <button type="button" class="btn-secondary-tw btn-sm-tw" @click="voyagerUserSearch = ''; voyagerUserRoleFilter = 'all'">
+                                                    Сбросить фильтры
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Нижняя панель таблицы -->
+                        <div class="p-3.5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                            <span>Показано: <strong>{{ filteredUsers.length }}</strong> из <strong>{{ users.length }}</strong> пользователей</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="btn-ghost-tw btn-sm-tw" @click="exportUsersExcel">
+                                    <i class="bi bi-download"></i> Экспорт Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ДАШБОРД: СЕКЦИЯ ПОСЛЕДНИХ СОБЫТИЙ -->
+                    <div v-if="voyagerTab === 'dashboard'" class="card-base p-0 overflow-hidden">
+                        <div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i class="bi bi-clock-history text-amber-500"></i> Недавние события аудита
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">История последних изменений в системе (Diff)</p>
+                            </div>
+                            <button type="button" class="btn-secondary-tw btn-sm-tw" @click="voyagerTab = 'logs'">
+                                Все логи ({{ logs.length }}) <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800 text-xs bg-white dark:bg-slate-900">
+                            <div v-for="l in logs.slice(0, 4)" :key="l.id" class="p-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                <div class="space-y-0.5">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                            {{ l.action }}
+                                        </span>
+                                        <span class="font-semibold text-slate-900 dark:text-white">{{ l.summary }}</span>
+                                    </div>
+                                    <span class="block text-slate-400 text-[11px]">{{ l.timestamp }} • Автор: {{ l.user }}</span>
+                                </div>
+                                <button v-if="l.before || l.after" class="btn-secondary-tw btn-sm-tw shrink-0" @click="openDiffModal(l)">
+                                    <i class="bi bi-file-diff text-sky-500"></i> Diff
+                                </button>
+                            </div>
+                            <div v-if="!logs.length" class="p-6 text-center text-slate-400">
+                                Журнал аудита пока пуст. Выполните действия в системе, чтобы они зафиксировались здесь.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ВКЛАДКА 3: КУРСЫ В VOYAGER -->
+                    <div v-if="voyagerTab === 'courses'" class="card-base p-0 overflow-hidden">
+                        <div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-slate-900">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i class="bi bi-book-fill text-emerald-500"></i> Управление курсами
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Список всех языковых программ и курсов школы</p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <div class="relative w-full sm:w-60">
+                                    <input type="text" v-model="voyagerCourseSearch" placeholder="Поиск курса, языка, автора..."
+                                        class="input-base text-xs py-1.5 pl-8 pr-7">
+                                    <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                    <button v-if="voyagerCourseSearch" @click="voyagerCourseSearch = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                        <i class="bi bi-x-circle-fill text-xs"></i>
+                                    </button>
+                                </div>
+                                <button type="button" class="btn-primary-tw btn-sm-tw" @click="openAddCourseModal">
+                                    <i class="bi bi-plus-lg"></i> Новый курс
+                                </button>
+                                <button type="button" class="btn-secondary-tw btn-sm-tw" @click="activePage = 'courses'">
+                                    <i class="bi bi-grid"></i> Каталог
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Таблица курсов -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase">
+                                    <tr>
+                                        <th class="p-3.5">Курс</th>
+                                        <th class="p-3.5">Язык / Уровень</th>
+                                        <th class="p-3.5">Преподаватель</th>
+                                        <th class="p-3.5">Цена</th>
+                                        <th class="p-3.5 text-center">Места</th>
+                                        <th class="p-3.5 text-right">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+                                    <tr v-for="c in filteredVoyagerCourses" :key="c.id" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                        <td class="p-3.5">
+                                            <div class="font-bold text-slate-900 dark:text-white">{{ c.title }}</div>
+                                            <div class="text-[11px] text-slate-400">{{ c.schedule || 'Расписание по набору' }}</div>
+                                        </td>
+                                        <td class="p-3.5 whitespace-nowrap">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 mr-1.5">{{ c.language }}</span>
+                                            <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">{{ c.level }}</span>
+                                        </td>
+                                        <td class="p-3.5 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap">{{ c.teacher }}</td>
+                                        <td class="p-3.5 font-bold text-slate-900 dark:text-white whitespace-nowrap">{{ c.price }} BYN</td>
+                                        <td class="p-3.5 text-center whitespace-nowrap">
+                                            <span class="text-xs px-2 py-0.5 rounded-full font-bold"
+                                                :class="c.seatsLeft > 2 ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'">
+                                                {{ c.seatsLeft !== undefined ? c.seatsLeft : c.seats }} / {{ c.seats }}
+                                            </span>
+                                        </td>
+                                        <td class="p-3.5 text-right whitespace-nowrap">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button type="button" class="btn-ghost-tw btn-sm-tw" @click="viewCourseDetails(c)" title="Просмотр">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button type="button" class="p-1.5 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors"
+                                                    @click="openEditCourseModal(c)" title="Редактировать">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 transition-colors"
+                                                    @click="deleteCourseAsync(c)" title="Удалить курс">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="!filteredVoyagerCourses.length">
+                                        <td colspan="6" class="p-8 text-center text-slate-400">
+                                            Курсы по данному запросу не найдены.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ВКЛАДКА 4: ЛОГИ В VOYAGER -->
+                    <div v-if="voyagerTab === 'logs'" class="card-base p-0 overflow-hidden">
+                        <div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-slate-900">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i class="bi bi-journal-text text-amber-500"></i> Журнал аудита действий (Logs)
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Полная история операций и сравнение изменений объектов (Diff)</p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <div class="relative w-full sm:w-60">
+                                    <input type="text" v-model="voyagerLogSearch" placeholder="Поиск по действию, автору..."
+                                        class="input-base text-xs py-1.5 pl-8 pr-7">
+                                    <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                    <button v-if="voyagerLogSearch" @click="voyagerLogSearch = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                        <i class="bi bi-x-circle-fill text-xs"></i>
+                                    </button>
+                                </div>
+                                <button type="button" class="btn-secondary-tw btn-sm-tw" @click="exportLogsJson" title="Экспорт логов в JSON">
+                                    <i class="bi bi-filetype-json"></i> JSON
+                                </button>
+                                <button type="button" class="btn-danger-tw btn-sm-tw" @click="clearVoyagerLogs" title="Очистить весь журнал">
+                                    <i class="bi bi-trash"></i> Очистить
+                                </button>
+                                <button type="button" class="btn-secondary-tw btn-sm-tw" @click="activePage = 'logs'">
+                                    <i class="bi bi-arrows-fullscreen"></i> На весь экран
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Список логов -->
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800 text-xs bg-white dark:bg-slate-900">
+                            <div v-for="l in filteredVoyagerLogs" :key="l.id" class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                                            {{ l.action }}
+                                        </span>
+                                        <span class="font-bold text-slate-900 dark:text-white">{{ l.summary }}</span>
+                                    </div>
+                                    <span class="block text-slate-400 text-[11px]">{{ l.timestamp }} • Автор: {{ l.user }} • Раздел: {{ l.target }}</span>
+                                </div>
+                                <button v-if="l.before || l.after" class="btn-secondary-tw btn-sm-tw shrink-0" @click="openDiffModal(l)">
+                                    <i class="bi bi-file-diff text-sky-500"></i> Сравнить (Diff)
+                                </button>
+                            </div>
+                            <div v-if="!filteredVoyagerLogs.length" class="p-8 text-center text-slate-400">
+                                События аудита не найдены.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1106,6 +1488,66 @@
                 <div class="flex gap-2">
                     <button class="btn-primary-tw btn-md-tw w-full" @click="errorModalVisible = false">Понятно</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- МОДАЛКА ПОЛЬЗОВАТЕЛЯ (VOYAGER) -->
+        <div v-if="userModalVisible"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+            @click="userModalVisible = false">
+            <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4" @click.stop>
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="bi" :class="isEditingUser ? 'bi-pencil-square text-sky-500' : 'bi-person-plus-fill text-sky-500'"></i>
+                        {{ isEditingUser ? 'Редактировать пользователя' : 'Добавить пользователя' }}
+                    </h3>
+                    <button type="button" class="btn-ghost-tw btn-sm-tw" @click="userModalVisible = false">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <form @submit.prevent="saveUserAsync" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Имя пользователя</label>
+                        <input type="text" v-model="userForm.name" placeholder="Иван Иванов" required class="input-base text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Email</label>
+                        <input type="email" v-model="userForm.email" placeholder="user@linguo.by" required class="input-base text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">
+                            {{ isEditingUser ? 'Новый пароль (оставьте пустым, если не меняется)' : 'Пароль' }}
+                        </label>
+                        <input type="password" v-model="userForm.password" :placeholder="isEditingUser ? 'Без изменений' : 'Минимум 6 символов'" :required="!isEditingUser" class="input-base text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Роль</label>
+                            <custom-select v-model="userForm.role" :options="roleOptions" placeholder="Роль" size="sm"></custom-select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Статус</label>
+                            <button type="button"
+                                class="w-full h-[38px] px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+                                :class="userForm.status === 'Активен' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800'"
+                                @click="userForm.status = userForm.status === 'Активен' ? 'Заблокирован' : 'Активен'">
+                                <i class="bi" :class="userForm.status === 'Активен' ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+                                {{ userForm.status }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" class="btn-secondary-tw btn-sm-tw" @click="userModalVisible = false">Отмена</button>
+                        <button type="submit" class="btn-primary-tw btn-sm-tw">
+                            <i class="bi bi-check-lg"></i> {{ isEditingUser ? 'Сохранить изменения' : 'Создать' }}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
