@@ -58,6 +58,44 @@
         }
     </script>
 
+    <style type="text/tailwindcss">
+        @layer components {
+            .btn-base {
+                @apply inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none;
+            }
+            .btn-primary-tw {
+                @apply btn-base bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:focus-visible:ring-white shadow-sm;
+            }
+            .btn-secondary-tw {
+                @apply btn-base bg-slate-100 text-slate-900 hover:bg-slate-200 focus-visible:ring-slate-500 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700;
+            }
+            .btn-ghost-tw {
+                @apply btn-base bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-400 dark:text-slate-300 dark:hover:bg-slate-800;
+            }
+            .btn-danger-tw {
+                @apply btn-base bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600 shadow-sm;
+            }
+            .btn-brand-tw {
+                @apply btn-base bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-600 shadow-sm;
+            }
+            .btn-sm-tw {
+                @apply text-xs px-3 py-1.5 rounded-lg gap-1.5;
+            }
+            .btn-md-tw {
+                @apply text-sm px-4 py-2 rounded-xl gap-2;
+            }
+            .btn-lg-tw {
+                @apply text-base px-6 py-3 rounded-2xl gap-2.5 font-semibold;
+            }
+            .input-base {
+                @apply w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent transition-all;
+            }
+            .card-base {
+                @apply bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow;
+            }
+        }
+    </style>
+
     <link rel="stylesheet" href="style.css">
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
@@ -331,7 +369,7 @@
                         <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Какой язык хотите выучить?</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Выберите направление — мы подберём программу под ваши цели и график</p>
                     </div>
-                    <button class="btn-secondary-tw btn-sm-tw self-start sm:self-auto shrink-0" @click="activePage = 'courses'">
+                    <button class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 self-start sm:self-auto shrink-0 transition-colors" @click="activePage = 'courses'">
                         Все направления ({{ courses.length }}) <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
@@ -369,8 +407,8 @@
                         <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Популярные программы обучения</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Интенсивные курсы с практикой диалогов, разбором реальных кейсов и сертификацией</p>
                     </div>
-                    <button class="btn-primary-tw btn-sm-tw self-start sm:self-auto shrink-0" @click="activePage = 'courses'">
-                        Каталог всех курсов ({{ courses.length }})
+                    <button class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 self-start sm:self-auto shrink-0 shadow-sm transition-colors" @click="activePage = 'courses'">
+                        Каталог всех курсов ({{ courses.length }}) <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
 
@@ -416,7 +454,9 @@
                                 <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
                                     <i class="bi bi-calendar3"></i> {{ c.schedule || 'Удобный график' }}
                                 </div>
-                                <button type="button" class="btn-primary-tw btn-sm-tw w-full mt-2" @click="viewCourseDetails(c)">
+                                <button type="button"
+                                    class="w-full mt-2 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm"
+                                    @click="viewCourseDetails(c)">
                                     Подробнее о курсе <i class="bi bi-arrow-right"></i>
                                 </button>
                             </div>
@@ -427,7 +467,7 @@
 
             <!-- 5. СЕКЦИЯ: КАК ПРОХОДИТ ОБУЧЕНИЕ (4 ШАГА) -->
             <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-                <div class="bg-gradient-to-br from-indigo-50/60 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-sm">
+                <div class="bg-gradient-to-br from-indigo-50/60 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900/90 dark:to-indigo-950/30 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-sm">
                     <div class="text-center max-w-2xl mx-auto mb-10">
                         <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Методика школы</span>
                         <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Как проходит обучение в LINGUO</h2>
@@ -436,45 +476,45 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
                         <!-- Шаг 1 -->
-                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm relative hover:-translate-y-1 transition-transform">
                             <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20">
                                 01
                             </div>
                             <h3 class="font-bold text-base text-slate-900 dark:text-white">Тестирование и цели</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                                 Проводим бесплатный экспресс-тест на уровень CEFR и выявляем ваши конкретные цели: карьера, переезд или экзамен.
                             </p>
                         </div>
 
                         <!-- Шаг 2 -->
-                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm relative hover:-translate-y-1 transition-transform">
                             <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20">
                                 02
                             </div>
                             <h3 class="font-bold text-base text-slate-900 dark:text-white">Группа и расписание</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                                 Подбираем группу равных по уровню студентов (до 6 человек) либо индивидуальные занятия в удобное время.
                             </p>
                         </div>
 
                         <!-- Шаг 3 -->
-                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm relative hover:-translate-y-1 transition-transform">
                             <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20">
                                 03
                             </div>
                             <h3 class="font-bold text-base text-slate-900 dark:text-white">80% разговорной речи</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                                 На уроках вы говорите на языке с первых минут: ролевые игры, разбор новостей, снятие страха ошибиться.
                             </p>
                         </div>
 
                         <!-- Шаг 4 -->
-                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm relative hover:-translate-y-1 transition-transform">
                             <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-emerald-600/20">
                                 04
                             </div>
                             <h3 class="font-bold text-base text-slate-900 dark:text-white">Сертификат CEFR</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                                 Защита итогового проекта, подтверждение достигнутого языкового уровня и выдача номерного сертификата.
                             </p>
                         </div>
@@ -561,7 +601,7 @@
                         <h2 class="text-3xl font-black text-slate-900 dark:text-white">Преподаватели, которые вдохновляют</h2>
                         <p class="mt-1 text-slate-600 dark:text-slate-300 text-sm">Опытные педагоги и носители языков помогут уверенно заговорить без акцента и пауз.</p>
                     </div>
-                    <button class="btn-secondary-tw btn-sm-tw self-start sm:self-auto shrink-0" @click="activePage = 'courses'">Все курсы</button>
+                    <button class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 self-start sm:self-auto shrink-0 transition-colors" @click="activePage = 'courses'">Все курсы</button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     <article v-for="teacher in teachers" :key="teacher.name" class="teacher-card card-base overflow-hidden flex flex-col justify-between">
@@ -578,8 +618,8 @@
                             </div>
                         </div>
                         <div class="p-5 pt-0">
-                            <button type="button" class="btn-secondary-tw btn-sm-tw w-full" @click="startChatWithTeacher(teacher.name)">
-                                <i class="bi bi-chat-dots"></i> Написать преподавателю
+                            <button type="button" class="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 transition-colors" @click="startChatWithTeacher(teacher.name)">
+                                <i class="bi bi-chat-dots text-indigo-500"></i> Написать преподавателю
                             </button>
                         </div>
                     </article>
@@ -601,12 +641,14 @@
                         </p>
                         <div class="flex flex-wrap items-center gap-3 pt-2">
                             <button type="button"
-                                class="btn-primary-tw btn-md-tw bg-white text-indigo-900 hover:bg-indigo-50 font-bold shadow-lg"
+                                class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm bg-white hover:bg-slate-100 shadow-xl transition-all active:scale-95"
+                                style="background-color: #ffffff !important; color: #0f172a !important;"
                                 @click="startPlacementTest('Английский')">
-                                <i class="bi bi-play-circle-fill text-indigo-600"></i> Пройти экспресс-тест (бесплатно)
+                                <i class="bi bi-play-circle-fill text-lg" style="color: #4f46e5 !important;"></i>
+                                <span style="color: #0f172a !important;">Пройти экспресс-тест (бесплатно)</span>
                             </button>
                             <button type="button"
-                                class="btn-ghost-tw btn-md-tw text-white hover:bg-white/10"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-sm text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all active:scale-95"
                                 @click="activePage = 'chat'">
                                 <i class="bi bi-chat-left-dots"></i> Консультация методиста
                             </button>
@@ -1386,7 +1428,7 @@
                     </div>
 
                     <!-- Карточка пользователя внизу сайдбара -->
-                    <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 m-2.5 rounded-xl flex items-center justify-between">
+                    <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800 m-2.5 rounded-xl flex items-center justify-between">
                         <div class="flex items-center gap-2.5 min-w-0">
                             <div class="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-300 font-bold flex items-center justify-center text-xs shrink-0">
                                 {{ currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'A' }}

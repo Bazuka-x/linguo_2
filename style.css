@@ -1460,6 +1460,103 @@ body{color:#172033;background:#f8fafc}
 button,.btn-primary-tw,.btn-secondary-tw,.btn-brand-tw,.btn-danger-tw,.btn-ghost-tw{cursor:pointer;transition:all .18s ease}
 button:not(:disabled):hover{filter:brightness(.97)}
 button:focus-visible{outline:3px solid rgba(99,102,241,.35);outline-offset:2px}
+
+/* =========================================================
+   BUTTON SUITE FALLBACKS & CONTRAST GUARDS
+========================================================= */
+.btn-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    user-select: none;
+    border-radius: 12px;
+}
+.btn-sm-tw {
+    font-size: 12px;
+    padding: 6px 12px;
+    gap: 6px;
+    border-radius: 8px;
+}
+.btn-md-tw {
+    font-size: 14px;
+    padding: 8px 16px;
+    gap: 8px;
+    border-radius: 12px;
+}
+.btn-lg-tw {
+    font-size: 16px;
+    padding: 12px 24px;
+    gap: 10px;
+    border-radius: 16px;
+    font-weight: 700;
+}
+.btn-primary-tw {
+    background-color: #0f172a;
+    color: #ffffff !important;
+    border: 1px solid transparent;
+}
+.btn-primary-tw:hover {
+    background-color: #1e293b;
+}
+.dark .btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]) {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+.dark .btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]) * {
+    color: #0f172a !important;
+}
+.dark .btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]):hover {
+    background-color: #f1f5f9 !important;
+}
+.btn-secondary-tw {
+    background-color: #f1f5f9;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0;
+}
+.btn-secondary-tw:hover {
+    background-color: #e2e8f0;
+}
+.dark .btn-secondary-tw {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+.dark .btn-secondary-tw * {
+    color: #f8fafc !important;
+}
+.dark .btn-secondary-tw:hover {
+    background-color: #334155 !important;
+}
+.btn-ghost-tw {
+    background-color: transparent;
+    color: #334155;
+}
+.btn-ghost-tw:hover {
+    background-color: #f1f5f9;
+}
+.dark .btn-ghost-tw {
+    color: #cbd5e1 !important;
+}
+.dark .btn-ghost-tw:hover {
+    background-color: #1e293b;
+}
+.btn-brand-tw {
+    background-color: #16a34a;
+    color: #ffffff !important;
+}
+.btn-brand-tw:hover {
+    background-color: #15803d;
+}
+.btn-danger-tw {
+    background-color: #dc2626;
+    color: #ffffff !important;
+}
+.btn-danger-tw:hover {
+    background-color: #b91c1c;
+}
+
 .teacher-card{border:1px solid #e5e7eb;background:#fff;transition:transform .2s ease,box-shadow .2s ease}
 .dark .teacher-card{background:#151e2e;border-color:#334155}
 .teacher-card:hover{transform:translateY(-4px);box-shadow:0 18px 35px rgba(15,23,42,.10)}
@@ -1479,4 +1576,29 @@ button:focus-visible{outline:3px solid rgba(99,102,241,.35);outline-offset:2px}
 .dark input,.dark textarea,.dark select{color:#f8fafc;background:#111827;border-color:#475569}
 input,textarea,select{color:#172033}
 .ad-slot,.sponsor-card{border-radius:20px}
+
+/* Гарантия контраста кнопок в темной теме */
+.dark button.btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]),
+.dark .btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]) {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+.dark button.btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]) *,
+.dark .btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]) * {
+    color: #0f172a !important;
+}
+.dark button.btn-primary-tw:not([class*="bg-indigo"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-sky"]):hover {
+    background-color: #f1f5f9 !important;
+}
+.dark button.btn-secondary-tw,
+.dark .btn-secondary-tw {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+.dark button.btn-secondary-tw *,
+.dark .btn-secondary-tw * {
+    color: #f8fafc !important;
+}
+
 @media(max-width:640px){.teacher-photo{height:210px}}
