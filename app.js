@@ -18,18 +18,18 @@ const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
 // -------------------------------------------------------------
 
 const INITIAL_COURSES = [
-    { 
-        id: 1, 
-        title: "Английский язык: Разговорный интенсив", 
-        language: "Английский", 
-        level: "B1", 
-        teacher: "Джеймс Уилсон", 
-        price: 2500, 
-        seats: 12, 
+    {
+        id: 1,
+        title: "Английский язык: Разговорный интенсив",
+        language: "Английский",
+        level: "B1",
+        teacher: "Джеймс Уилсон",
+        price: 2500,
+        seats: 12,
         seatsLeft: 3,
-        status: "Набор открыт", 
-        description: "Разговорная практика, преодоление языкового барьера и подготовка к зарубежным поездкам и собеседованиям.", 
-        image: "images/english_course_1791364563938.jpg", 
+        status: "Набор открыт",
+        description: "Разговорная практика, преодоление языкового барьера и подготовка к зарубежным поездкам и собеседованиям.",
+        image: "images/eng.jpg",
         createdAt: "2026-10-01",
         schedule: "Вт / Чт 19:00 - 20:30",
         duration: "3 месяца (48 акад. часов)",
@@ -40,18 +40,18 @@ const INITIAL_COURSES = [
             { title: "Модуль 4: Сертификация и экзамен", desc: "Пробный тест формата CEFR B1/B2 и выдача персонального номерного сертификата." }
         ]
     },
-    { 
-        id: 2, 
-        title: "Испанский язык для начинающих", 
-        language: "Испанский", 
-        level: "A1", 
-        teacher: "Мария Родригес", 
-        price: 2100, 
-        seats: 10, 
+    {
+        id: 2,
+        title: "Испанский язык для начинающих",
+        language: "Испанский",
+        level: "A1",
+        teacher: "Мария Родригес",
+        price: 2100,
+        seats: 10,
         seatsLeft: 4,
-        status: "Набор открыт", 
-        description: "Погружение в культуру и коммуникативная методика с первого занятия. Быстрый старт с нуля.", 
-        image: "images/spanish_course_1791364574198.jpg", 
+        status: "Набор открыт",
+        description: "Погружение в культуру и коммуникативная методика с первого занятия. Быстрый старт с нуля.",
+        image: "images/esp.jpg",
         createdAt: "2026-10-02",
         schedule: "Пн / Ср 18:30 - 20:00",
         duration: "2.5 месяца (40 акад. часов)",
@@ -62,18 +62,18 @@ const INITIAL_COURSES = [
             { title: "Модуль 4: Итоговый разговорный проект", desc: "Защита диалога на свободную тему с получением сертификата A1." }
         ]
     },
-    { 
-        id: 3, 
-        title: "Немецкий язык: Грамматика и практика", 
-        language: "Немецкий", 
-        level: "B2", 
-        teacher: "Ганс Вебер", 
-        price: 2900, 
-        seats: 8, 
+    {
+        id: 3,
+        title: "Немецкий язык: Грамматика и практика",
+        language: "Немецкий",
+        level: "B2",
+        teacher: "Ганс Вебер",
+        price: 2900,
+        seats: 8,
         seatsLeft: 2,
-        status: "Идет обучение", 
-        description: "Грамматическая база и интерактивные сессии для учебы и работы в Германии, Австрии и Швейцарии.", 
-        image: "images/german_course_1791364584649.jpg", 
+        status: "Идет обучение",
+        description: "Грамматическая база и интерактивные сессии для учебы и работы в Германии, Австрии и Швейцарии.",
+        image: "images/deu.jpg",
         createdAt: "2026-10-03",
         schedule: "Ср / Пт 19:30 - 21:00",
         duration: "4 месяца (64 акад. часов)",
@@ -84,18 +84,18 @@ const INITIAL_COURSES = [
             { title: "Модуль 4: Подготовка к Goethe-Zertifikat B2", desc: "Отработка всех 4 частей экзамена: Lesen, Hören, Schreiben, Sprechen." }
         ]
     },
-    { 
-        id: 4, 
-        title: "Китайский язык: Иероглифика и HSK", 
-        language: "Китайский", 
-        level: "A2", 
-        teacher: "Ли Вэй", 
-        price: 3500, 
-        seats: 6, 
+    {
+        id: 4,
+        title: "Китайский язык: Иероглифика и HSK",
+        language: "Китайский",
+        level: "A2",
+        teacher: "Ли Вэй",
+        price: 3500,
+        seats: 6,
         seatsLeft: 1,
-        status: "Набор открыт", 
-        description: "Иероглифика, тональное произношение и качественная подготовка к экзамену HSK 1-3.", 
-        image: "images/chinese_course_1791364594208.jpg", 
+        status: "Набор открыт",
+        description: "Иероглифика, тональное произношение и качественная подготовка к экзамену HSK 1-3.",
+        image: "images/cha.jpg",
         createdAt: "2026-10-05",
         schedule: "Вт / Сб 18:00 - 19:30",
         duration: "3.5 месяца (56 акад. часов)",
@@ -106,18 +106,18 @@ const INITIAL_COURSES = [
             { title: "Модуль 4: Стратегия HSK", desc: "Решение типовых тестов HSK с разбором ловушек аудиозаписей." }
         ]
     },
-    { 
-        id: 5, 
-        title: "Деловой английский (Business English)", 
-        language: "Английский", 
-        level: "C1", 
-        teacher: "Сара Дженкинс", 
-        price: 3200, 
-        seats: 15, 
+    {
+        id: 5,
+        title: "Деловой английский (Business English)",
+        language: "Английский",
+        level: "C1",
+        teacher: "Сара Дженкинс",
+        price: 3200,
+        seats: 15,
         seatsLeft: 5,
-        status: "Набор открыт", 
-        description: "Бизнес-лексика, проведение презентаций, переговоры и деловая переписка с зарубежными партнерами.", 
-        image: "images/hero_learning_1791364551777.jpg", 
+        status: "Набор открыт",
+        description: "Бизнес-лексика, проведение презентаций, переговоры и деловая переписка с зарубежными партнерами.",
+        image: "images/hero_learning_1791364551777.jpg",
         createdAt: "2026-10-08",
         schedule: "Пн / Чт 20:00 - 21:30",
         duration: "3 месяца (48 акад. часов)",
@@ -128,18 +128,18 @@ const INITIAL_COURSES = [
             { title: "Модуль 4: Бизнес-кейс проект", desc: "Защита реального бизнес-плана перед носителем языка." }
         ]
     },
-    { 
-        id: 6, 
-        title: "Французский язык: Романтика Парижа", 
-        language: "Французский", 
-        level: "A1", 
-        teacher: "Жан Дюпон", 
-        price: 2300, 
-        seats: 9, 
+    {
+        id: 6,
+        title: "Французский язык: Романтика Парижа",
+        language: "Французский",
+        level: "A1",
+        teacher: "Жан Дюпон",
+        price: 2300,
+        seats: 9,
         seatsLeft: 3,
-        status: "Набор открыт", 
-        description: "Основы фонетики, повседневные диалоги и знакомство с богатой культурой Франции.", 
-        image: "images/spanish_course_1791364574198.jpg", 
+        status: "Набор открыт",
+        description: "Основы фонетики, повседневные диалоги и знакомство с богатой культурой Франции.",
+        image: "images/spanish_course_1791364574198.jpg",
         createdAt: "2026-10-10",
         schedule: "Вт / Пт 18:30 - 20:00",
         duration: "2.5 месяца (40 акад. часов)",
@@ -153,83 +153,83 @@ const INITIAL_COURSES = [
 ];
 
 const INITIAL_TEACHERS = [
-    { 
-        id: 1, 
-        name: "Джеймс Уилсон", 
-        language: "Английский", 
-        country: "Великобритания (Лондон)", 
-        experience: "8 лет стажа", 
-        rating: "4.9", 
-        students: 420, 
+    {
+        id: 1,
+        name: "Джеймс Уилсон",
+        language: "Английский",
+        country: "Великобритания (Лондон)",
+        experience: "8 лет стажа",
+        rating: "4.9",
+        students: 420,
         avatar: "JW",
         avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80",
         education: "Oxford University (MA Applied Linguistics), Cambridge CELTA & DELTA",
-        bio: "Носитель британского английского языка. Специализируется на разговорных интенсивах, снятии психологического барьера и подготовке к международным сертификатам IELTS Academic (средний балл учеников 7.5+)." 
+        bio: "Носитель британского английского языка. Специализируется на разговорных интенсивах, снятии психологического барьера и подготовке к международным сертификатам IELTS Academic (средний балл учеников 7.5+)."
     },
-    { 
-        id: 2, 
-        name: "Мария Родригес", 
-        language: "Испанский", 
-        country: "Испания (Мадрид)", 
-        experience: "6 лет стажа", 
-        rating: "4.8", 
-        students: 310, 
+    {
+        id: 2,
+        name: "Мария Родригес",
+        language: "Испанский",
+        country: "Испания (Мадрид)",
+        experience: "6 лет стажа",
+        rating: "4.8",
+        students: 310,
         avatar: "MR",
         avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&q=80",
         education: "Universidad Complutense de Madrid, Международный сертификат DELE",
-        bio: "Дипломированный преподаватель испанского как иностранного. Применяет авторскую коммуникативную методику, благодаря которой студенты начинают бегло строить диалоги уже на второй неделе занятий." 
+        bio: "Дипломированный преподаватель испанского как иностранного. Применяет авторскую коммуникативную методику, благодаря которой студенты начинают бегло строить диалоги уже на второй неделе занятий."
     },
-    { 
-        id: 3, 
-        name: "Ганс Вебер", 
-        language: "Немецкий", 
-        country: "Германия (Мюнхен)", 
-        experience: "9 лет стажа", 
-        rating: "4.9", 
-        students: 380, 
+    {
+        id: 3,
+        name: "Ганс Вебер",
+        language: "Немецкий",
+        country: "Германия (Мюнхен)",
+        experience: "9 лет стажа",
+        rating: "4.9",
+        students: 380,
         avatar: "GW",
         avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80",
         education: "Ludwig-Maximilians-Universität München, Сертификат Goethe-Institut",
-        bio: "Эксперт по подготовке к Goethe-Zertifikat B1/B2 и TestDaF. Помогает студентам и специалистам успешно подготовиться к переезду, поступлению в европейские вузы и профессиональной карьере." 
+        bio: "Эксперт по подготовке к Goethe-Zertifikat B1/B2 и TestDaF. Помогает студентам и специалистам успешно подготовиться к переезду, поступлению в европейские вузы и профессиональной карьере."
     },
-    { 
-        id: 4, 
-        name: "Ли Вэй", 
-        language: "Китайский", 
-        country: "Китай (Пекин)", 
-        experience: "5 лет стажа", 
-        rating: "4.7", 
-        students: 220, 
+    {
+        id: 4,
+        name: "Ли Вэй",
+        language: "Китайский",
+        country: "Китай (Пекин)",
+        experience: "5 лет стажа",
+        rating: "4.7",
+        students: 220,
         avatar: "LW",
         avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&q=80",
         education: "Beijing Normal University, Сертификат преподавателя CTCSOL",
-        bio: "Мастер каллиграфии и эксперт экзаменов HSK 1-5. Учит понимать структуру иероглифов через ассоциации и исторические корни, превращая сложную грамоту в увлекательный процесс." 
+        bio: "Мастер каллиграфии и эксперт экзаменов HSK 1-5. Учит понимать структуру иероглифов через ассоциации и исторические корни, превращая сложную грамоту в увлекательный процесс."
     },
-    { 
-        id: 5, 
-        name: "Сара Дженкинс", 
-        language: "Английский", 
-        country: "США (Чикаго)", 
-        experience: "7 лет стажа", 
-        rating: "4.9", 
-        students: 360, 
+    {
+        id: 5,
+        name: "Сара Дженкинс",
+        language: "Английский",
+        country: "США (Чикаго)",
+        experience: "7 лет стажа",
+        rating: "4.9",
+        students: 360,
         avatar: "SJ",
         avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&q=80",
         education: "Northwestern University, Сертификат TEFL / Business English Trainer",
-        bio: "Бизнес-тренер и преподаватель корпоративного английского. Специализируется на подготовке к собеседованиям в FAANG, питчинге стартапов и эффективных международных переговорах." 
+        bio: "Бизнес-тренер и преподаватель корпоративного английского. Специализируется на подготовке к собеседованиям в FAANG, питчинге стартапов и эффективных международных переговорах."
     },
-    { 
-        id: 6, 
-        name: "Жан Дюпон", 
-        language: "Французский", 
-        country: "Франция (Лион)", 
-        experience: "6 лет стажа", 
-        rating: "4.8", 
-        students: 290, 
+    {
+        id: 6,
+        name: "Жан Дюпон",
+        language: "Французский",
+        country: "Франция (Лион)",
+        experience: "6 лет стажа",
+        rating: "4.8",
+        students: 290,
         avatar: "JD",
         avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&q=80",
         education: "Sorbonne Université (Paris), Экзаменатор DELF / DALF",
-        bio: "Лингвист, ставит чистое парижское произношение без акцента. Уроки насыщены живыми материалами французского кино, музыки и гастрономии." 
+        bio: "Лингвист, ставит чистое парижское произношение без акцента. Уроки насыщены живыми материалами французского кино, музыки и гастрономии."
     }
 ];
 
@@ -295,7 +295,7 @@ function playNotificationSound(type = 'send') {
             osc.start();
             osc.stop(ctx.currentTime + 0.25);
         }
-    } catch (e) {}
+    } catch (e) { }
 }
 
 // -------------------------------------------------------------
@@ -505,7 +505,7 @@ const app = createApp({
         const addAuditLog = (action, entity, summary, before = null, after = null) => {
             const entry = { id: Date.now(), timestamp: new Date().toLocaleString('ru-RU'), user: currentUser.value?.email || 'Гость', role: currentUser.value?.role || 'guest', action, entity, entityId: after?.id ?? before?.id ?? null, summary, before, after };
             logs.value.unshift(entry);
-            try { localStorage.setItem('linguo_logs', JSON.stringify(logs.value)); } catch (e) {}
+            try { localStorage.setItem('linguo_logs', JSON.stringify(logs.value)); } catch (e) { }
             return entry;
         };
         const openDiffModal = (log) => {
@@ -726,7 +726,7 @@ const app = createApp({
         const setSession = (remember) => {
             const days = remember ? 30 : 7;
             const expires = Date.now() + days * 24 * 60 * 60 * 1000;
-            try { localStorage.setItem(SESSION_KEY, String(expires)); } catch (e) {}
+            try { localStorage.setItem(SESSION_KEY, String(expires)); } catch (e) { }
         };
         const isSessionValid = () => {
             try {
@@ -748,7 +748,7 @@ const app = createApp({
 
         const handleLogout = () => {
             currentUser.value = null;
-            try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+            try { localStorage.removeItem(SESSION_KEY); } catch (e) { }
             syncToStorage();
             showToast("Вы вышли из учетной записи", 'info');
             activePage.value = 'home';
@@ -993,7 +993,7 @@ const app = createApp({
             } catch (e) { localFiles.value = []; }
         };
         const saveLocalFiles = () => {
-            try { localStorage.setItem('linguo_files', JSON.stringify(localFiles.value)); } catch (e) {}
+            try { localStorage.setItem('linguo_files', JSON.stringify(localFiles.value)); } catch (e) { }
         };
         const addLocalFile = (name, size, type) => {
             if (!name) return;
@@ -1067,14 +1067,14 @@ const app = createApp({
         const kanbanDone = computed(() => userKanbanTasks.value.filter(t => t.status === 'done'));
         const moveKanbanTask = (task, newStatus) => {
             task.status = newStatus;
-            try { localStorage.setItem('linguo_kanban', JSON.stringify(kanbanTasks.value)); } catch (e) {}
+            try { localStorage.setItem('linguo_kanban', JSON.stringify(kanbanTasks.value)); } catch (e) { }
             showToast(`Задача перемещена в [${newStatus}]`, 'info');
         };
         const addKanbanTask = () => {
             if (!newKanbanTitle.value.trim()) return;
             kanbanTasks.value.push({ id: 'k-' + Date.now(), status: 'todo', title: newKanbanTitle.value.trim(), tag: 'Задачи', priority: 'Средний', assignee: currentUser.value ? currentUser.value.name : 'Студент', ownerEmail: currentUser.value ? currentUser.value.email : '', avatar: 'ME' });
             newKanbanTitle.value = '';
-            try { localStorage.setItem('linguo_kanban', JSON.stringify(kanbanTasks.value)); } catch (e) {}
+            try { localStorage.setItem('linguo_kanban', JSON.stringify(kanbanTasks.value)); } catch (e) { }
             showToast("Карточка добавлена в To Do", 'success');
         };
 
@@ -1395,7 +1395,7 @@ const app = createApp({
                 localStorage.setItem('linguo_users', JSON.stringify(users.value));
                 localStorage.setItem('linguo_logs', JSON.stringify(logs.value));
                 if (currentUser.value) localStorage.setItem('linguo_current_user', JSON.stringify(currentUser.value));
-            } catch (e) {}
+            } catch (e) { }
         };
 
         onMounted(() => {
