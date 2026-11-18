@@ -204,32 +204,6 @@ const INITIAL_TEACHERS = [
         avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&q=80",
         education: "Beijing Normal University, Сертификат преподавателя CTCSOL",
         bio: "Мастер каллиграфии и эксперт экзаменов HSK 1-5. Учит понимать структуру иероглифов через ассоциации и исторические корни, превращая сложную грамоту в увлекательный процесс."
-    },
-    {
-        id: 5,
-        name: "Сара Дженкинс",
-        language: "Английский",
-        country: "США (Чикаго)",
-        experience: "7 лет стажа",
-        rating: "4.9",
-        students: 360,
-        avatar: "SJ",
-        avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&q=80",
-        education: "Northwestern University, Сертификат TEFL / Business English Trainer",
-        bio: "Бизнес-тренер и преподаватель корпоративного английского. Специализируется на подготовке к собеседованиям в FAANG, питчинге стартапов и эффективных международных переговорах."
-    },
-    {
-        id: 6,
-        name: "Жан Дюпон",
-        language: "Французский",
-        country: "Франция (Лион)",
-        experience: "6 лет стажа",
-        rating: "4.8",
-        students: 290,
-        avatar: "JD",
-        avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&q=80",
-        education: "Sorbonne Université (Paris), Экзаменатор DELF / DALF",
-        bio: "Лингвист, ставит чистое парижское произношение без акцента. Уроки насыщены живыми материалами французского кино, музыки и гастрономии."
     }
 ];
 
