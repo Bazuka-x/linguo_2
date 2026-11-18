@@ -29,7 +29,7 @@ const INITIAL_COURSES = [
         seatsLeft: 3,
         status: "Набор открыт",
         description: "Разговорная практика, преодоление языкового барьера и подготовка к зарубежным поездкам и собеседованиям.",
-        image: "images/eng.jpg",
+        image: "/images/eng.jpg",
         createdAt: "2026-10-01",
         schedule: "Вт / Чт 19:00 - 20:30",
         duration: "3 месяца (48 акад. часов)",
