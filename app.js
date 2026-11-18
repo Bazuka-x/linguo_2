@@ -345,6 +345,137 @@ const app = createApp({
         };
         const billingAnnual = ref(false);
 
+        // --- ДАННЫЕ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ (ИНФО-БЛОКИ) ---
+        const languageDirections = [
+            { name: "Английский", icon: "bi-translate", flag: "🇬🇧", desc: "Разговорный, Business, IT и подготовка к IELTS", levels: "A1 — C1", coursesCount: 3, color: "from-blue-500/10 to-indigo-500/10 border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400" },
+            { name: "Испанский", icon: "bi-sun-fill", flag: "🇪🇸", desc: "Живой язык Мадрида и Барселоны для жизни и путешествий", levels: "A1 — B2", coursesCount: 2, color: "from-amber-500/10 to-orange-500/10 border-orange-200 dark:border-orange-800 text-amber-600 dark:text-amber-400" },
+            { name: "Немецкий", icon: "bi-building", flag: "🇩🇪", desc: "Чёткая грамматика для работы, учебы в Германии и TestDaF", levels: "A1 — B2", coursesCount: 2, color: "from-emerald-500/10 to-teal-500/10 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400" },
+            { name: "Китайский", icon: "bi-yin-yang", flag: "🇨🇳", desc: "Иероглифика, тональное произношение и подготовка к HSK", levels: "A1 — A2", coursesCount: 2, color: "from-rose-500/10 to-red-500/10 border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400" },
+            { name: "Французский", icon: "bi-cup-hot-fill", flag: "🇫🇷", desc: "Изящная мелодика речи, культура, гастрономия и DELF", levels: "A1 — B1", coursesCount: 1, color: "from-purple-500/10 to-pink-500/10 border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400" }
+        ];
+
+        const selectLanguageFilter = (lang) => {
+            courseLangFilter.value = lang;
+            activePage.value = 'courses';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        const featuredCourses = computed(() => courses.value.slice(0, 4));
+
+        const activeFaq = ref(0);
+        const toggleFaq = (idx) => {
+            activeFaq.value = activeFaq.value === idx ? -1 : idx;
+        };
+
+        const faqList = [
+            {
+                question: "С какого уровня можно начинать обучение в LINGUO?",
+                answer: "С любого! В нашей школе разработаны программы как для начинающих с абсолютного нуля (уровень A1 Starter), так и для продвинутых студентов (уровни B2 и C1), которым нужна беглость речи, профессиональная лексика или сдача международных экзаменов."
+            },
+            {
+                question: "Как проходят онлайн-занятия?",
+                answer: "Обучение проходит в живом формате на интерактивной платформе в мини-группах (до 6 человек) или один на один с преподавателем. 80% времени каждого урока посвящено разговорной практике. Все материалы, домашние задания и видеозаписи уроков бессрочно доступны в вашем личном кабинете."
+            },
+            {
+                question: "Что если я пропущу урок по уважительной причине?",
+                answer: "Записи всех пройденных уроков сохраняются в личном кабинете вместе с домашними заданиями и конспектами. Вы всегда можете пересмотреть пропущенный урок, задать вопросы преподавателю в чате или согласовать отработку с методистом школы."
+            },
+            {
+                question: "Выдаётся ли официальный сертификат по окончании курса?",
+                answer: "Да! После завершения учебной программы и успешной защиты финального проекта каждый студент получает официальный номерной сертификат международного стандарта CEFR с подтверждением уровня владения языком."
+            },
+            {
+                question: "Можно ли сменить преподавателя или перевестись в другую группу?",
+                answer: "Да, абсолютно бесплатно. Если вам не подойдёт расписание или темп группы, методическая служба LINGUO оперативно подберёт другую группу или предложит формат индивидуальных уроков без потери оплаты."
+            }
+        ];
+
+        const studentReviews = [
+            {
+                id: 1,
+                name: "Алексей Смирнов",
+                role: "Senior Frontend Developer",
+                language: "Английский B2 → C1",
+                rating: 5,
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&q=80",
+                goal: "Оффер в зарубежный финтех",
+                text: "За 4 месяца разговорного интенсива с Джеймсом полностью ушёл психологический барьер. Успешно прошёл 4 раунда технических интервью на английском и получил оффер с релокацией в Амстердам!"
+            },
+            {
+                id: 2,
+                name: "Екатерина Морозова",
+                role: "UX/UI Дизайнер",
+                language: "Испанский A1 → A2",
+                rating: 5,
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80",
+                goal: "Переезд в Испанию",
+                text: "Мария Родригес — потрясающий педагог! Уроки пролетают на одном дыхании, живые диалоги и никакой скучной зубрежки. Уже через два месяца я сама свободно общалась с риелтором и в банке в Валенсии."
+            },
+            {
+                id: 3,
+                name: "Дмитрий Ковалёв",
+                role: "Студент магистратуры",
+                language: "Немецкий B1 → B2",
+                rating: 5,
+                avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&q=80",
+                goal: "Goethe-Zertifikat B2",
+                text: "Ганс Вебер помог структурировать сложную грамматику и научил писать эссе по немецким академическим стандартам. Результат: 88 баллов на экзамене и зачисление в Мюнхенский технический университет!"
+            }
+        ];
+
+        // Экспресс-тест на уровень языка
+        const placementTestModalVisible = ref(false);
+        const testQuestionStep = ref(0);
+        const testSelectedAnswers = ref([]);
+        const testLanguage = ref('Английский');
+        const testResult = ref(null);
+
+        const testQuestions = [
+            {
+                q: "1. Выберите правильный вариант: I _____ in London for three years before moving to Paris.",
+                options: ["had lived", "have lived", "am living", "was live"],
+                correct: 0
+            },
+            {
+                q: "2. Выберите верную форму: If I had known about the lesson, I _____ attended it.",
+                options: ["will have", "would have", "would", "had"],
+                correct: 1
+            },
+            {
+                q: "3. Что означает фразеологизм «Break a leg» в повседневной речи?",
+                options: ["Сломать ногу", "Пожелание удачи («Ни пуха, ни пера!»)", "Прекратить спор", "Сдаться"],
+                correct: 1
+            }
+        ];
+
+        const startPlacementTest = (lang = 'Английский') => {
+            testLanguage.value = lang;
+            testQuestionStep.value = 0;
+            testSelectedAnswers.value = [];
+            testResult.value = null;
+            placementTestModalVisible.value = true;
+        };
+
+        const answerTestQuestion = (optionIndex) => {
+            testSelectedAnswers.value.push(optionIndex);
+            if (testQuestionStep.value < testQuestions.length - 1) {
+                testQuestionStep.value++;
+            } else {
+                let score = 0;
+                testQuestions.forEach((q, idx) => {
+                    if (testSelectedAnswers.value[idx] === q.correct) score++;
+                });
+                if (score === 3) {
+                    testResult.value = { level: 'B2 / C1 — Upper-Intermediate', text: 'Превосходный результат! У вас крепкая база и отличное понимание идиом. Рекомендуем наш разговорный интенсив или Business English.' };
+                } else if (score === 2) {
+                    testResult.value = { level: 'B1 — Intermediate', text: 'Уверенный средний уровень! Базовые конструкции усвоены, рекомендуем курс B1 для устранения пауз и беглости речи.' };
+                } else {
+                    testResult.value = { level: 'A1-A2 — Elementary', text: 'Базовый уровень. Прекрасная возможность выстроить системные знания без пробелов с нашими чуткими педагогами.' };
+                }
+                testQuestionStep.value = testQuestions.length;
+            }
+        };
+
         // --- Студенты для дашборда ---
         const students = ref([
             { id: 1, name: "Александр Волков", course: "Английский: Разговорный интенсив", amount: 2500, date: "Сегодня, 14:30" },
@@ -1321,6 +1452,11 @@ const app = createApp({
             students, stepperStep, stepperData, nextStepperStep, prevStepperStep,
 
             diffModalVisible, selectedLogForDiff, openDiffModal, computeDiffRows,
+
+            // Главная страница: направления, курсы, FAQ, отзывы, экспресс-тест
+            languageDirections, selectLanguageFilter, featuredCourses,
+            activeFaq, toggleFaq, faqList, studentReviews,
+            placementTestModalVisible, testQuestionStep, testSelectedAnswers, testLanguage, testResult, testQuestions, startPlacementTest, answerTestQuestion,
 
             emailModalVisible, createGoogleDriveDump
         };

@@ -210,73 +210,479 @@
             </div>
         </header>
 
-        <!-- ГЛАВНАЯ -->
+        <!-- ГЛАВНАЯ СТРАНИЦА -->
         <main v-if="activePage === 'home'" class="flex-1">
+            <!-- 1. HERO СЕКЦИЯ -->
             <section class="py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     <div class="lg:col-span-7 space-y-6">
-                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                            <i class="bi bi-stars text-amber-500"></i> Онлайн-школа иностранных языков
-                        </span>
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                            Изучайте иностранные языки онлайн
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800">
+                                <i class="bi bi-mortarboard-fill text-indigo-500"></i> Онлайн-школа иностранных языков LINGUO
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800">
+                                <i class="bi bi-star-fill text-amber-500 text-[11px]"></i> 4.9 из 5.0 (420+ отзывов)
+                            </span>
+                        </div>
+
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.12]">
+                            Свободная речь на иностранных языках с первых уроков
                         </h1>
-                        <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">
-                            Интерактивные курсы, преподаватели-носители языка и гибкий график обучения для любого уровня
-                            подготовки от A1 до C2.
+
+                        <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+                            Интерактивное обучение с дипломированными преподавателями и носителями языка. 80% времени занятий — живая разговорная практика в мини-группах до 6 человек.
                         </p>
-                        <div class="flex flex-wrap items-center gap-4">
-    <!-- Кнопка "Каталог курсов" -->
-    <button @click="activePage = 'courses'"
-        class="group relative inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-indigo-600 rounded-2xl hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-1 active:scale-95">
-        <i class="bi bi-grid-fill text-lg group-hover:rotate-12 transition-transform"></i>
-        <span>Каталог курсов</span>
-        <!-- Бейдж с количеством -->
-        <span class="ml-1 px-2.5 py-0.5 text-xs font-black bg-white/20 text-white rounded-full">
-            {{ courses.length }}
-        </span>
-    </button>
-</div>
+
+                        <!-- Кнопки действий -->
+                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                            <button @click="activePage = 'courses'"
+                                class="group relative inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm sm:text-base font-bold text-white transition-all duration-300 bg-indigo-600 rounded-2xl hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:scale-95">
+                                <i class="bi bi-grid-fill text-base group-hover:rotate-12 transition-transform"></i>
+                                <span>Каталог курсов</span>
+                                <span class="ml-1 px-2 py-0.5 text-xs font-black bg-white/20 text-white rounded-full">
+                                    {{ courses.length }}
+                                </span>
+                            </button>
+
+                            <button @click="startPlacementTest('Английский')"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-2xl transition-all hover:-translate-y-0.5 active:scale-95 border border-slate-200 dark:border-slate-700 shadow-sm">
+                                <i class="bi bi-patch-check-fill text-indigo-500"></i>
+                                <span>Экспресс-тест уровня</span>
+                                <span class="px-1.5 py-0.5 text-[10px] uppercase font-extrabold bg-emerald-500 text-white rounded">Бесплатно</span>
+                            </button>
+
+                            <button @click="activePage = 'chat'"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                                <i class="bi bi-chat-dots-fill text-base"></i>
+                                <span>Чат с методистом</span>
+                            </button>
+                        </div>
+
+                        <!-- Преимущества в одну строку -->
+                        <div class="pt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80">
+                            <span class="inline-flex items-center gap-1.5"><i class="bi bi-check-circle-fill text-emerald-500"></i> Сертификат CEFR</span>
+                            <span class="inline-flex items-center gap-1.5"><i class="bi bi-check-circle-fill text-emerald-500"></i> Записи всех уроков 24/7</span>
+                            <span class="inline-flex items-center gap-1.5"><i class="bi bi-check-circle-fill text-emerald-500"></i> Speaking Club по выходным</span>
+                        </div>
                     </div>
-                    <div class="lg:col-span-5">
-                        <img src="images/hero_learning_1791364551777.jpg" alt="Онлайн обучение"
-                            class="rounded-3xl shadow-2xl object-cover w-full max-h-[420px]">
+
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative">
+                            <img src="images/hero_learning_1791364551777.jpg" alt="Онлайн обучение в LINGUO"
+                                class="rounded-3xl shadow-2xl object-cover w-full max-h-[460px] border border-slate-200/60 dark:border-slate-800">
+
+                            <!-- Плавающий бейдж 1 -->
+                            <div class="absolute -bottom-4 -left-4 sm:bottom-6 sm:-left-6 bg-white dark:bg-slate-900 rounded-2xl p-3.5 shadow-xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-lg font-bold">
+                                    <i class="bi bi-chat-quote-fill"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">80% разговорной практики</span>
+                                    <span class="text-[11px] text-slate-400">Преодоление языкового барьера</span>
+                                </div>
+                            </div>
+
+                            <!-- Плавающий бейдж 2 -->
+                            <div class="hidden sm:flex absolute -top-4 -right-4 bg-white dark:bg-slate-900 rounded-2xl p-3 shadow-lg border border-slate-200/80 dark:border-slate-800 items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center text-sm font-bold">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Мини-группы</span>
+                                    <span class="text-[10px] text-slate-400">до 6 студентов</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- 2. СЕКЦИЯ МЕТРИК: LINGUO В ЦИФРАХ -->
             <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-                <div class="flex items-end justify-between gap-4 mb-6">
-                    <div>
-                        <p class="text-sm font-semibold text-indigo-600 mb-2">Наша команда</p>
-                        <h2 class="text-3xl font-black text-slate-900 dark:text-white">Преподаватели, которые вдохновляют</h2>
-                        <p class="mt-2 text-slate-600 dark:text-slate-300">Опытные педагоги и носители языков помогут уверенно заговорить.</p>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="card-base p-5 sm:p-6 text-center hover:-translate-y-1 transition-transform">
+                        <div class="text-3xl sm:text-4xl font-black text-indigo-600 dark:text-indigo-400">10+</div>
+                        <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1">Программ и уровней</div>
+                        <p class="text-[11px] text-slate-500 mt-1">От Starter A1 до Advanced C1 по стандарту CEFR</p>
                     </div>
-                    <button class="btn-secondary-tw btn-md-tw" @click="activePage = 'courses'">Все курсы</button>
+                    <div class="card-base p-5 sm:p-6 text-center hover:-translate-y-1 transition-transform">
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400">1 200+</div>
+                        <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1">Выпускников школы</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Заговорили свободно для работы, переезда и учебы</p>
+                    </div>
+                    <div class="card-base p-5 sm:p-6 text-center hover:-translate-y-1 transition-transform">
+                        <div class="text-3xl sm:text-4xl font-black text-amber-500 dark:text-amber-400">98%</div>
+                        <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1">Успешная сдача экзаменов</div>
+                        <p class="text-[11px] text-slate-500 mt-1">С первого раза сдают IELTS, DELE, Goethe-Zertifikat</p>
+                    </div>
+                    <div class="card-base p-5 sm:p-6 text-center hover:-translate-y-1 transition-transform">
+                        <div class="text-3xl sm:text-4xl font-black text-purple-600 dark:text-purple-400">4.9 ★</div>
+                        <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1">Рейтинг преподавателей</div>
+                        <p class="text-[11px] text-slate-500 mt-1">На основе более 420 подтвержденных отзывов</p>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    <article v-for="teacher in teachers" :key="teacher.name" class="teacher-card card-base overflow-hidden">
-                        <img :src="teacher.avatarUrl" :alt="teacher.name" class="teacher-photo" loading="lazy">
-                        <div class="p-5">
-                            <h3 class="font-bold text-lg text-slate-900 dark:text-white">{{ teacher.name }}</h3>
-                            <p class="text-sm text-indigo-600 dark:text-indigo-300 mt-1">{{ teacher.language }} · {{ teacher.country }}</p>
-                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-3 line-clamp-3">{{ teacher.bio }}</p>
-                            <div class="flex items-center justify-between mt-4 text-xs text-slate-500 dark:text-slate-300">
-                                <span><i class="bi bi-star-fill text-amber-500"></i> {{ teacher.rating }}</span>
-                                <span>{{ teacher.experience }} опыта</span>
+            </section>
+
+            <!-- 3. СЕКЦИЯ: ЯЗЫКОВЫЕ НАПРАВЛЕНИЯ -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Популярные направления</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Какой язык хотите выучить?</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Выберите направление — мы подберём программу под ваши цели и график</p>
+                    </div>
+                    <button class="btn-secondary-tw btn-sm-tw self-start sm:self-auto shrink-0" @click="activePage = 'courses'">
+                        Все направления ({{ courses.length }}) <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    <div v-for="dir in languageDirections" :key="dir.name"
+                        class="card-base p-5 cursor-pointer hover:-translate-y-1.5 hover:shadow-lg transition-all group border-t-4"
+                        :class="dir.name === 'Английский' ? 'border-t-indigo-500' : dir.name === 'Испанский' ? 'border-t-amber-500' : dir.name === 'Немецкий' ? 'border-t-emerald-500' : dir.name === 'Китайский' ? 'border-t-rose-500' : 'border-t-purple-500'"
+                        @click="selectLanguageFilter(dir.name)">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-3xl">{{ dir.flag }}</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                {{ dir.levels }}
+                            </span>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            {{ dir.name }}
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                            {{ dir.desc }}
+                        </p>
+                        <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                            <span>{{ dir.coursesCount }} курса</span>
+                            <span class="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Выбрать <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. СЕКЦИЯ: ТОП ПОПУЛЯРНЫХ КУРСОВ -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Набор в группы открыт</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Популярные программы обучения</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Интенсивные курсы с практикой диалогов, разбором реальных кейсов и сертификацией</p>
+                    </div>
+                    <button class="btn-primary-tw btn-sm-tw self-start sm:self-auto shrink-0" @click="activePage = 'courses'">
+                        Каталог всех курсов ({{ courses.length }})
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <article v-for="c in featuredCourses" :key="c.id"
+                        class="card-base p-0 overflow-hidden flex flex-col hover:-translate-y-1.5 hover:shadow-xl transition-all group">
+                        <!-- Превью картинка с бейджами -->
+                        <div class="relative h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                            <img :src="c.image" :alt="c.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute top-3 left-3 flex gap-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white backdrop-blur-sm shadow-sm">
+                                    {{ c.language }}
+                                </span>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm">
+                                    {{ c.level }}
+                                </span>
+                            </div>
+                            <div class="absolute bottom-3 right-3">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-slate-900/85 text-white backdrop-blur-sm">
+                                    {{ c.price }} BYN
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Контент карточки -->
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-base text-slate-900 dark:text-white line-clamp-2 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                    {{ c.title }}
+                                </h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                                    {{ c.description }}
+                                </p>
+                            </div>
+
+                            <div class="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                                <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                                    <span class="flex items-center gap-1.5"><i class="bi bi-person-fill text-indigo-500"></i> {{ c.teacher }}</span>
+                                    <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        <i class="bi bi-person-check"></i> Осталось {{ c.seatsLeft !== undefined ? c.seatsLeft : 3 }} места
+                                    </span>
+                                </div>
+                                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                                    <i class="bi bi-calendar3"></i> {{ c.schedule || 'Удобный график' }}
+                                </div>
+                                <button type="button" class="btn-primary-tw btn-sm-tw w-full mt-2" @click="viewCourseDetails(c)">
+                                    Подробнее о курсе <i class="bi bi-arrow-right"></i>
+                                </button>
                             </div>
                         </div>
                     </article>
                 </div>
             </section>
 
-            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 grid md:grid-cols-3 gap-5">
-                <article class="card-base p-6"><i class="bi bi-globe2 text-2xl text-indigo-600"></i><h3 class="font-bold text-lg mt-3 text-slate-900 dark:text-white">Кто мы</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">LINGUO — онлайн-школа, где обучение строится вокруг живого общения, практики и понятных целей.</p></article>
-                <article class="card-base p-6"><i class="bi bi-lightbulb text-2xl text-indigo-600"></i><h3 class="font-bold text-lg mt-3 text-slate-900 dark:text-white">Как мы учим</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Небольшие группы, интерактивные материалы, обратная связь и записи занятий для повторения.</p></article>
-                <article class="card-base p-6"><i class="bi bi-award text-2xl text-indigo-600"></i><h3 class="font-bold text-lg mt-3 text-slate-900 dark:text-white">Ваш результат</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Помогаем отслеживать прогресс и применять язык в путешествиях, учёбе и работе.</p></article>
+            <!-- 5. СЕКЦИЯ: КАК ПРОХОДИТ ОБУЧЕНИЕ (4 ШАГА) -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="bg-gradient-to-br from-indigo-50/60 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-sm">
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Методика школы</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Как проходит обучение в LINGUO</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Четыре простых шага от первого знакомства до уверенного владения иностранным языком</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+                        <!-- Шаг 1 -->
+                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20">
+                                01
+                            </div>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-white">Тестирование и цели</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                                Проводим бесплатный экспресс-тест на уровень CEFR и выявляем ваши конкретные цели: карьера, переезд или экзамен.
+                            </p>
+                        </div>
+
+                        <!-- Шаг 2 -->
+                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20">
+                                02
+                            </div>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-white">Группа и расписание</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                                Подбираем группу равных по уровню студентов (до 6 человек) либо индивидуальные занятия в удобное время.
+                            </p>
+                        </div>
+
+                        <!-- Шаг 3 -->
+                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20">
+                                03
+                            </div>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-white">80% разговорной речи</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                                На уроках вы говорите на языке с первых минут: ролевые игры, разбор новостей, снятие страха ошибиться.
+                            </p>
+                        </div>
+
+                        <!-- Шаг 4 -->
+                        <div class="card-base p-5 bg-white dark:bg-slate-850 relative">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white font-black text-base flex items-center justify-center mb-4 shadow-md shadow-emerald-600/20">
+                                04
+                            </div>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-white">Сертификат CEFR</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                                Защита итогового проекта, подтверждение достигнутого языкового уровня и выдача номерного сертификата.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <!-- Excel Dropzone -->
+            <!-- 6. СЕКЦИЯ: ПОЧЕМУ ВЫБИРАЮТ LINGUO (ПРЕИМУЩЕСТВА) -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Наши стандарты</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Почему студенты выбирают LINGUO</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Качественный подход к обучению, проверенный методистами и подтвержденный результатами</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <article class="card-base p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-2xl flex items-center justify-center mb-4">
+                            <i class="bi bi-mortarboard"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Носители языка и профи</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                            Все преподаватели имеют высшее лингвистическое образование и международные сертификаты (CELTA, DELTA, DELE, Goethe).
+                        </p>
+                    </article>
+
+                    <article class="card-base p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 text-2xl flex items-center justify-center mb-4">
+                            <i class="bi bi-mic"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Speaking Club по выходным</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                            Бесплатные разговорные клубы с носителями языка каждую субботу и воскресенье для всех активных студентов школы.
+                        </p>
+                    </article>
+
+                    <article class="card-base p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-100 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 text-2xl flex items-center justify-center mb-4">
+                            <i class="bi bi-laptop"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Платформа и записи уроков</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                            Видеозаписи прошедших уроков, домашние задания и интерактивные тренажеры слов доступны в личном кабинете 24/7.
+                        </p>
+                    </article>
+
+                    <article class="card-base p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 text-2xl flex items-center justify-center mb-4">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Гибкий график и отработки</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                            Если вы пропустили урок — вы не теряете часы. Вы можете отработать занятие с параллельной группой или по записи.
+                        </p>
+                    </article>
+
+                    <article class="card-base p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 text-2xl flex items-center justify-center mb-4">
+                            <i class="bi bi-chat-heart"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Поддержка и чат с куратором</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                            Личный чат с преподавателем и учебным куратором на платформе. Ответы на вопросы и подробный разбор домашних заданий.
+                        </p>
+                    </article>
+
+                    <article class="card-base p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-2xl flex items-center justify-center mb-4">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Сертификат CEFR</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                            Официальный номерной сертификат международного образца с подтверждением уровня для работодателей и европейских вузов.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- 7. СЕКЦИЯ: ПРЕПОДАВАТЕЛИ -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <p class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-1">Наша команда</p>
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-white">Преподаватели, которые вдохновляют</h2>
+                        <p class="mt-1 text-slate-600 dark:text-slate-300 text-sm">Опытные педагоги и носители языков помогут уверенно заговорить без акцента и пауз.</p>
+                    </div>
+                    <button class="btn-secondary-tw btn-sm-tw self-start sm:self-auto shrink-0" @click="activePage = 'courses'">Все курсы</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <article v-for="teacher in teachers" :key="teacher.name" class="teacher-card card-base overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <img :src="teacher.avatarUrl" :alt="teacher.name" class="teacher-photo" loading="lazy">
+                            <div class="p-5">
+                                <h3 class="font-bold text-lg text-slate-900 dark:text-white">{{ teacher.name }}</h3>
+                                <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 mt-1">{{ teacher.language }} · {{ teacher.country }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 line-clamp-3 leading-relaxed">{{ teacher.bio }}</p>
+                                <div class="flex items-center justify-between mt-4 text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="font-bold text-slate-800 dark:text-slate-200"><i class="bi bi-star-fill text-amber-500"></i> {{ teacher.rating }}</span>
+                                    <span>{{ teacher.experience }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-5 pt-0">
+                            <button type="button" class="btn-secondary-tw btn-sm-tw w-full" @click="startChatWithTeacher(teacher.name)">
+                                <i class="bi bi-chat-dots"></i> Написать преподавателю
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- 8. СЕКЦИЯ: ИНТЕРАКТИВНЫЙ CTA БАННЕР ТЕСТА -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white p-8 sm:p-12 shadow-2xl">
+                    <div class="relative z-10 max-w-2xl space-y-4">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/20">
+                            <i class="bi bi-patch-question-fill text-amber-400"></i> Онлайн-диагностика уровня
+                        </span>
+                        <h2 class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
+                            Узнайте свой реальный уровень языка за 3 минуты
+                        </h2>
+                        <p class="text-sm sm:text-base text-indigo-100 leading-relaxed">
+                            Пройдите короткий экспресс-тест LINGUO. Вы получите персональные рекомендации методиста и промокод на скидку 15% на первый месяц обучения.
+                        </p>
+                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                            <button type="button"
+                                class="btn-primary-tw btn-md-tw bg-white text-indigo-900 hover:bg-indigo-50 font-bold shadow-lg"
+                                @click="startPlacementTest('Английский')">
+                                <i class="bi bi-play-circle-fill text-indigo-600"></i> Пройти экспресс-тест (бесплатно)
+                            </button>
+                            <button type="button"
+                                class="btn-ghost-tw btn-md-tw text-white hover:bg-white/10"
+                                @click="activePage = 'chat'">
+                                <i class="bi bi-chat-left-dots"></i> Консультация методиста
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Декоративные фоновые элементы -->
+                    <div class="absolute -right-10 -bottom-10 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none"></div>
+                    <div class="absolute right-12 top-1/2 -translate-y-1/2 hidden lg:block opacity-25 text-9xl">
+                        <i class="bi bi-translate"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. СЕКЦИЯ: ОТЗЫВЫ ВЫПУСКНИКОВ -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Истории успеха</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Отзывы наших выпускников</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Реальные результаты студентов, достигших своих целей с LINGUO</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <article v-for="rev in studentReviews" :key="rev.id"
+                        class="card-base p-6 flex flex-col justify-between hover:-translate-y-1 transition-transform">
+                        <div>
+                            <!-- Звезды рейтинга -->
+                            <div class="flex items-center gap-1 text-amber-400 text-sm mb-3">
+                                <i v-for="s in rev.rating" :key="s" class="bi bi-star-fill"></i>
+                            </div>
+                            <blockquote class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                «{{ rev.text }}»
+                            </blockquote>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                            <img :src="rev.avatar" :alt="rev.name" class="w-11 h-11 rounded-full object-cover shadow-sm ring-2 ring-indigo-500/20">
+                            <div>
+                                <div class="font-bold text-sm text-slate-900 dark:text-white">{{ rev.name }}</div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400">{{ rev.role }} · <strong class="text-indigo-600 dark:text-indigo-400">{{ rev.language }}</strong></div>
+                                <div class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5"><i class="bi bi-check-lg"></i> {{ rev.goal }}</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- 10. СЕКЦИЯ: FAQ (ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ) -->
+            <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+                <div class="text-center mb-10">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Ответы на вопросы</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Часто задаваемые вопросы</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mt-2">Всё, что важно знать о формате обучения, графике и сертификации</p>
+                </div>
+
+                <div class="space-y-3">
+                    <div v-for="(faq, fIndex) in faqList" :key="fIndex"
+                        class="card-base p-0 overflow-hidden transition-all duration-200">
+                        <button type="button"
+                            class="w-full text-left p-4 sm:p-5 flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                            @click="toggleFaq(fIndex)">
+                            <span>{{ faq.question }}</span>
+                            <span class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center shrink-0 transition-transform duration-200"
+                                :class="{ 'rotate-180 bg-indigo-50 dark:bg-indigo-950 text-indigo-600': activeFaq === fIndex }">
+                                <i class="bi bi-chevron-down text-xs"></i>
+                            </span>
+                        </button>
+                        <div v-show="activeFaq === fIndex"
+                            class="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 mt-1">
+                            {{ faq.answer }}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11. EXCEL DROPZONE -->
             <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
                 <div class="border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all cursor-pointer"
                     :class="isDragging ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 scale-[1.01]' : 'border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 hover:border-emerald-500'"
@@ -307,7 +713,8 @@
                 </div>
             </section>
 
-            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 12. СПОНСОРСКИЙ БЛОК -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
                 <ad-slot format="banner" label="Спонсорский блок • Реклама"
                     title="Платформа LinguaPro — практикуйте иностранный язык каждый день. Специальные условия для студентов LINGUO"
                     slot-id="ADS-TOP-BANNER">
@@ -1548,6 +1955,84 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- МОДАЛКА ЭКСПРЕСС-ТЕСТА УРОВНЯ -->
+        <div v-if="placementTestModalVisible"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+            @click="placementTestModalVisible = false">
+            <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5" @click.stop>
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-base shadow-sm">
+                            <i class="bi bi-patch-check-fill"></i>
+                        </span>
+                        <div>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-white leading-tight">Экспресс-тест на уровень языка</h3>
+                            <span class="text-[11px] text-slate-400">Язык: {{ testLanguage }}</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-ghost-tw btn-sm-tw" @click="placementTestModalVisible = false">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Вопросы теста -->
+                <div v-if="testQuestionStep < testQuestions.length" class="space-y-4">
+                    <div class="flex items-center justify-between text-xs text-slate-500">
+                        <span>Вопрос {{ testQuestionStep + 1 }} из {{ testQuestions.length }}</span>
+                        <div class="flex gap-1.5">
+                            <span v-for="n in testQuestions.length" :key="n" class="w-7 h-1.5 rounded-full"
+                                :class="n - 1 <= testQuestionStep ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'"></span>
+                        </div>
+                    </div>
+
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white leading-snug">
+                        {{ testQuestions[testQuestionStep].q }}
+                    </h4>
+
+                    <div class="space-y-2 pt-2">
+                        <button v-for="(opt, oi) in testQuestions[testQuestionStep].options" :key="oi"
+                            type="button"
+                            class="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-sm font-medium text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between group"
+                            @click="answerTestQuestion(oi)">
+                            <span>{{ opt }}</span>
+                            <i class="bi bi-chevron-right text-xs opacity-0 group-hover:opacity-100 text-indigo-600 transition-opacity"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Результат теста -->
+                <div v-else class="text-center py-4 space-y-4">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-3xl flex items-center justify-center mx-auto shadow-sm">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Ваш ориентировочный уровень</span>
+                        <h4 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ testResult?.level }}</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 max-w-md mx-auto leading-relaxed">
+                            {{ testResult?.text }}
+                        </p>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800 text-xs text-indigo-900 dark:text-indigo-200 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <i class="bi bi-gift-fill text-indigo-600 text-base"></i>
+                            <span class="font-bold">Ваш промокод на скидку 15%:</span>
+                        </div>
+                        <span class="font-mono font-black px-2.5 py-1 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400">LINGUO15</span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2 pt-2">
+                        <button type="button" class="btn-primary-tw btn-md-tw flex-1" @click="placementTestModalVisible = false; activePage = 'courses'">
+                            <i class="bi bi-grid-fill"></i> Выбрать курс
+                        </button>
+                        <button type="button" class="btn-secondary-tw btn-md-tw flex-1" @click="placementTestModalVisible = false; activePage = 'chat'">
+                            <i class="bi bi-chat-dots-fill"></i> Чат с методистом
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
