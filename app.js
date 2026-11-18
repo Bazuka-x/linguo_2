@@ -29,7 +29,7 @@ const INITIAL_COURSES = [
         seatsLeft: 3,
         status: "Набор открыт",
         description: "Разговорная практика, преодоление языкового барьера и подготовка к зарубежным поездкам и собеседованиям.",
-        image: new URL('./images/eng.jpg', import.meta.url).href,
+        image: "images/eng.jpg",
         createdAt: "2026-10-01",
         schedule: "Вт / Чт 19:00 - 20:30",
         duration: "3 месяца (48 акад. часов)",
@@ -139,7 +139,7 @@ const INITIAL_COURSES = [
         seatsLeft: 3,
         status: "Набор открыт",
         description: "Основы фонетики, повседневные диалоги и знакомство с богатой культурой Франции.",
-        image: "images/spanish_course_1791364574198.jpg",
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80",
         createdAt: "2026-10-10",
         schedule: "Вт / Пт 18:30 - 20:00",
         duration: "2.5 месяца (40 акад. часов)",
@@ -1321,7 +1321,23 @@ const app = createApp({
         const initStorage = () => {
             try {
                 const sc = localStorage.getItem('linguo_courses');
-                courses.value = sc ? JSON.parse(sc) : [...INITIAL_COURSES];
+                const storedVer = localStorage.getItem('linguo_courses_ver');
+                const COURSES_STORAGE_VERSION = 'v2_images';
+                const hasOutdatedData = !sc || storedVer !== COURSES_STORAGE_VERSION ||
+                    sc.includes('spanish_course_') ||
+                    sc.includes('english_course_') ||
+                    sc.includes('chinese_course_') ||
+                    sc.includes('german_course_') ||
+                    sc.includes('localhost:') ||
+                    sc.includes('eng.jpg') && sc.includes('import.meta');
+
+                if (hasOutdatedData) {
+                    courses.value = [...INITIAL_COURSES];
+                    localStorage.setItem('linguo_courses', JSON.stringify(courses.value));
+                    localStorage.setItem('linguo_courses_ver', COURSES_STORAGE_VERSION);
+                } else {
+                    courses.value = JSON.parse(sc);
+                }
                 selectedCourse.value = courses.value[0];
 
                 const su = localStorage.getItem('linguo_users');
